@@ -1,0 +1,4 @@
+requests
+disnake
+fastapi
+uvicorn
