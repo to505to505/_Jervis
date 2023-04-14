@@ -8,3 +8,4 @@ from serializers import *
 class HelloWorldView(APIView):
     def get(self, request):
         return Response({"message": "Hello, world!"})
+    
