@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: jervis_db
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - jervis_postgres_vol:/var/lib/postgresql/data
+    networks:
+      - jervis_net
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "docker_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  django:
+    image: jervis_django:1
+    container_name: jervis_django
+    environment:
+      HOST: jervis_db
+      PASSWORD: password
+      USER: postgres
+      DB: postgres
+    networks:
+      - jervis_net
+    restart: always
+    ports:
+        - '8000:8000'
+    healthcheck:
+       interval: 5s 
+       timeout: 5s
+       retries: 5
+       test: ["CMD", "curl", "-f", "http://localhost:8000/test"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+       - jervis_backend_vol:/jervis
+
+  discord:
+    image: jervis_discord:1
+    container_name: jervis_discord
+    environment:
+      HOST: jervis_django
+      APP_TOKEN: 142
+    networks:
+      - jervis_net
+    restart: always
+    ports:
+        - '8080:8080'
+
+  tg:
+    image: jervis_tg:1
+    container_name: jervis_tg
+    environment:
+      HOST: jervis_django
+      APP_TOKEN: 6040501884:AAFCe2FnKJCcNFJzh0BEJZy2DehuWx3YqCw
+    networks:
+      - jervis_net
+    restart: always
+
+volumes:
+ jervis_postgres_vol:
+   name: jervis_postgres_vol
+ jervis_backend_vol:
+   name: jervis_backend_vol
+
+networks:
+ jervis_net:
+   name: jervis_net
