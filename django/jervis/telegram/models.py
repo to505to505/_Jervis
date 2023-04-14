@@ -2,7 +2,7 @@ from django.db import models
 
 class Chat(models.Model):
     chat_id = models.IntegerField(unique=True, null=True)
-    generation_amount = models.IntegerField(default=5)
+    generation_amount = models.IntegerField(default=15)
 
     def __str__(self) -> str:
         return f"tg_id: {self.tg_channel_id}"
