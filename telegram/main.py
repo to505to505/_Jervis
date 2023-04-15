@@ -72,7 +72,7 @@ async def handle_generate(message: types.Message):
     async def handle_prompt(message: types.Message):
         prompt = message.text
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
-        result = send_prompt(chat_id, prompt)
+        result = await send_prompt(chat_id, prompt)
     
         send_result(chat_id, prompt, result)
 
