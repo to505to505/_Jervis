@@ -2,8 +2,22 @@ import disnake
 from disnake.ext import commands
 import time
 import requests
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+import wget
+import os
+import urllib.request
+from google.oauth2 import service_account
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
+from googleapiclient.discovery import build
 
+#config for service account of google drive_service
+SCOPES = ['https://www.googleapis.com/auth/drive']
+SERVICE_ACCOUNT_FILE = '/Users/pavelsedyh/Desktop/jervisreshost-d276f897f4c0.json'
+credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build('drive', 'v3', credentials=credentials)
 
+#config for discord bot
 bot = commands.Bot(command_prefix='.', help_command=None, intents=disnake.Intents.all())
 url = 'https://discord.com/api/v9/interactions'
 auth = {
@@ -21,12 +35,19 @@ async def on_message(message):
         print("type: " + str(message.type))
         print("content: " + str(message.content))
         print("embeds: " + str(message.embeds))
-        time.sleep(10)
-        await message.channel.send(f"type: {message.type}")
-        if len(message.embeds) >= 1:
-            await message.channel.send(f"image: {message.embeds[0].image.proxy_url}")
-            await message.channel.send(f"image: {message.embeds[0].fields[0].value}")
-            await message.channel.send(f"image: {message.embeds[0].fields}")
-        #requests.post("localhost:8080/image_response", message.embeds[0].image.proxy_url)
+        #time.sleep(10)
+        await message.channel.send(f"image: {message.attachments[0].url}")
+        #dsurl = message.attachments[0].url
+        filename = message.attachments[0].url.split('_')[-1]
+        await message.attachments[0].save('/Users/pavelsedyh/Desktop/pictures/' + filename)
+        print('saved')
+        FILE_PATH = '/Users/pavelsedyh/Desktop/pictures/' + filename
+        creds = service_account.Credentials.from_service_account_file(
+            SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        drive_service = build('drive', 'v3', credentials=creds)
+        file_metadata = {'name': filename, 'parents': ['1-6d1bVS_vi7-zWUyZKoyO7WPsujWSmSV']}
+        media = MediaFileUpload(FILE_PATH, resumable=True)
+        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        print(f"File ID: {file.get('id')}")
 
 bot.run("MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4")
