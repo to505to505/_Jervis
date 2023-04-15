@@ -1,37 +1,20 @@
 import logging
+import time
+import requests
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import Message
 from aiogram.dispatcher.filters import Text
 from aiogram.types import InputFile
-import time
-
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot(token='6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
-dp = Dispatcher(bot)
-
-@dp.message_handler(commands=['start'])
-async def send_welcome(message: types.Message):
-    chat_id = message.chat.id
-    await bot.send_message(chat_id, 'hello world)', reply_markup = keyboard)
-
-
-
-
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-
-# Define the keyboard
-keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-button1 = KeyboardButton("Сгенерировать изображение")
-button2 = KeyboardButton("Мой профиль")
-button3 = KeyboardButton("Техническая поддержка")
-keyboard.row(button1, button2)
-keyboard.add(button3)
-
-
+async def send_id(chat_id):
+    data = {"chat_id": chat_id}
+    status, _ = requests.post("http://localhost:8000/api/tg/create_chat/", data)
 
 async def send_prompt(chat_id, prompt):
     pass
@@ -43,7 +26,7 @@ async def push_button(chat_id, propmpt, button):
 async def send_result(chat_id, prompt, result):
     with open('photo.jpg', 'rb') as photo:
         await bot.send_photo(chat_id, photo=InputFile(photo))
-
+        
     button1 = InlineKeyboardButton(text="U1", callback_data="U1")
     button2 = InlineKeyboardButton(text="U2", callback_data="U2")
     button3 = InlineKeyboardButton(text="U3", callback_data="U3")
@@ -58,6 +41,24 @@ async def send_result(chat_id, prompt, result):
     keyboard1.row(button1, button2, button3, button4, button9)
     keyboard1.row(button5, button6, button7, button8)
 
+@dp.message_handler(commands=['start'])
+async def send_welcome(message: types.Message):
+    chat_id = message.chat.id
+    await bot.send_message(chat_id, 'hello world)', reply_markup = keyboard)
+    await send_id()
+    
+
+
+
+
+
+# Define the keyboard
+keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+button1 = KeyboardButton("Сгенерировать изображение")
+button2 = KeyboardButton("Мой профиль")
+button3 = KeyboardButton("Техническая поддержка")
+keyboard.row(button1, button2)
+keyboard.add(button3)
 
 
 @dp.message_handler(text="Сгенерировать изображение")
@@ -97,17 +98,12 @@ async def handle_generate(message: types.Message):
         result = send_prompt_photo(chat_id, caption, file)
         send_result(chat_id, caption, result)
 
-    
-
-
-
-
-
-
 
 # dp.register_message_handler(handle_photo, Text(equals="Option 1"), content_types=types.ContentTypes.PHOTO)
 #dp.register_message_handler(start_handler, commands=['start'])
 
 if __name__ == '__main__':
+    bot = Bot(token='6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
+    dp = Dispatcher(bot)
     executor.start_polling(dp, skip_updates=False)
 
