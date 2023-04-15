@@ -2,11 +2,7 @@ import disnake
 from disnake.ext import commands
 import time
 import requests
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
-import wget
 import os
-import urllib.request
 from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from googleapiclient.discovery import build
