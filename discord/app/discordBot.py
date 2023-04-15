@@ -11,9 +11,13 @@ from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from googleapiclient.discovery import build
 
+#pathes
+PICTURE_PATH = ''
+
+
 #config for service account of google drive_service
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = '/Users/pavelsedyh/Desktop/jervisreshost-d276f897f4c0.json'
+SERVICE_ACCOUNT_FILE = 'jervisreshost-d276f897f4c0.json'
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('drive', 'v3', credentials=credentials)
 
@@ -39,9 +43,9 @@ async def on_message(message):
         await message.channel.send(f"image: {message.attachments[0].url}")
         #dsurl = message.attachments[0].url
         filename = message.attachments[0].url.split('_')[-1]
-        await message.attachments[0].save('/Users/pavelsedyh/Desktop/pictures/' + filename)
+        await message.attachments[0].save(PICTURE_PATH + filename)
         print('saved')
-        FILE_PATH = '/Users/pavelsedyh/Desktop/pictures/' + filename
+        FILE_PATH = PICTURE_PATH + filename
         creds = service_account.Credentials.from_service_account_file(
             SERVICE_ACCOUNT_FILE, scopes=SCOPES)
         drive_service = build('drive', 'v3', credentials=creds)
