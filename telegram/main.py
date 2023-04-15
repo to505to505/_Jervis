@@ -6,7 +6,7 @@ from aiogram.types import Message
 from aiogram.dispatcher.filters import Text
 from aiogram.types import InputFile
 import time
-
+import requests
 
 logging.basicConfig(level=logging.INFO)
 
@@ -17,6 +17,7 @@ dp = Dispatcher(bot)
 async def send_welcome(message: types.Message):
     chat_id = message.chat.id
     await bot.send_message(chat_id, 'hello world)', reply_markup = keyboard)
+    
 
 
 
@@ -32,7 +33,8 @@ keyboard.row(button1, button2)
 keyboard.add(button3)
 
 
-
+async def send_id(chat_id):
+    requests
 async def send_prompt(chat_id, prompt):
     pass
 async def send_prompt_photo(chat_id, prompt, photo):
