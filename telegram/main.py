@@ -34,7 +34,9 @@ keyboard.add(button3)
 
 
 async def send_id(chat_id):
-    requests
+    data = {"chat_id": chat_id}
+    status, _ = requests.post("http://localhost:8000/create_chat/", data)
+
 async def send_prompt(chat_id, prompt):
     pass
 async def send_prompt_photo(chat_id, prompt, photo):
