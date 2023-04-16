@@ -3,9 +3,11 @@ import requests
 import os
 import logging
 import asyncio
+from pathlib import Path
 
 import disnake
 from disnake.ext import commands
+
 from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from googleapiclient.discovery import build
@@ -14,12 +16,11 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 
 #pathes
 PICTURE_PATH = ''
-MAIN_FOLDER_PATH = 'E:/_Jervis/discord/app/'
-
+MAIN_FOLDER_PATH = Path(__file__).resolve(strict=True).parent
 
 #config for service account of google drive_service
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = MAIN_FOLDER_PATH + 'jervisreshost-d276f897f4c0.json'
+SERVICE_ACCOUNT_FILE = MAIN_FOLDER_PATH.joinpath('jervisreshost-d276f897f4c0.json')
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('drive', 'v3', credentials=credentials)
 
@@ -27,7 +28,7 @@ service = build('drive', 'v3', credentials=credentials)
 bot = commands.Bot(command_prefix='.', help_command=None, intents=disnake.Intents.all())
 url = 'https://discord.com/api/v9/interactions'
 auth = {
-  'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
+  'authorization': os.getenv("AUTH_TOKEN")
 }
 
 #bot async funcrions
@@ -71,4 +72,4 @@ async def on_message(message):
         else:
             logging.warning("There are no attachment...")
 
-bot.run("MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4")
+bot.run(os.getenv("APP_TOKEN"))

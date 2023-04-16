@@ -1,6 +1,7 @@
 import logging
 import time
-import requests
+import aiohttp
+import os
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
@@ -14,12 +15,25 @@ logging.basicConfig(level=logging.INFO)
 
 async def send_id(chat_id):
     data = {"chat_id": chat_id}
-    status, _ = requests.post("http://localhost:8000/api/tg/create_chat/", data)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"http://{os.getenv('HOST')}:8000/api/tg/create_chat/", data=data) as response:
+            response_text = await response.text()
+            print(response_text)
+            
+async def hello():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"http://{os.getenv('HOST')}:8000/") as response:
+            response_text = await response.text()
+            return response_text
 
 async def send_prompt(chat_id, prompt):
-    pass
-async def send_prompt_photo(chat_id, prompt, photo):
-    pass
+    data = {"chat_id": chat_id,
+            "prompt":prompt}
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"http://{os.getenv('HOST')}:8000/api/tg/send_prompt/", data=data) as response:
+            response_text = await response.text()
+            print(response_text)
+
 async def push_button(chat_id, propmpt, button):
     pass
 
@@ -41,16 +55,25 @@ async def send_result(chat_id, prompt, result):
     keyboard1.row(button1, button2, button3, button4, button9)
     keyboard1.row(button5, button6, button7, button8)
 
+bot = Bot(token=os.getenv("APP_TOKEN"))
+dp = Dispatcher(bot)
+    
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     chat_id = message.chat.id
     await bot.send_message(chat_id, 'hello world)', reply_markup = keyboard)
-    await send_id()
+    await send_id(chat_id)
     
-
-
-
-
+@dp.message_handler(commands=['help'])
+async def send_help(message: types.Message):
+    chat_id = message.chat.id
+    server_response = await hello()
+    await bot.send_message(chat_id, server_response, reply_markup = keyboard)
+    
+@dp.message_handler(commands=['test'])
+async def send_help(message: types.Message):
+    chat_id = message.chat.id
+    await bot.send_message(chat_id, "Test 200 kind of, OK", reply_markup = keyboard)
 
 # Define the keyboard
 keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -59,7 +82,6 @@ button2 = KeyboardButton("Мой профиль")
 button3 = KeyboardButton("Техническая поддержка")
 keyboard.row(button1, button2)
 keyboard.add(button3)
-
 
 @dp.message_handler(text="Сгенерировать изображение")
 async def handle_generate(message: types.Message):
@@ -80,8 +102,6 @@ async def handle_generate(message: types.Message):
         async def handle_U1(message: types.Message):
             pass
 
-        
-    
     #промпт + референс
     @dp.message_handler(content_types=types.ContentTypes.PHOTO)
     async def handle_photo(message: types.Message):
@@ -103,7 +123,5 @@ async def handle_generate(message: types.Message):
 #dp.register_message_handler(start_handler, commands=['start'])
 
 if __name__ == '__main__':
-    bot = Bot(token='6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
-    dp = Dispatcher(bot)
     executor.start_polling(dp, skip_updates=False)
 
