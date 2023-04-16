@@ -26,7 +26,7 @@ dp = Dispatcher(bot)
 
 # dp.register_message_handler(handle_photo, Text(equals="Option 1"), content_types=types.ContentTypes.PHOTO)
 dp.register_message_handler(send_welcome, commands=['start'])
-dp.regster_message_handler(handle_generate, Text(equals='Сгенерировать изображение'))
+dp.register_message_handler(handle_generate, Text(equals='Сгенерировать изображение'))
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=False)
