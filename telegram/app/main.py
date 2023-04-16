@@ -16,12 +16,14 @@ logging.basicConfig(level=logging.INFO)
 async def send_id(chat_id):
     data = {"chat_id": chat_id}
     async with aiohttp.ClientSession() as session:
+        logging.info(f"{os.getenv('HOST')}:8000")
         async with session.post(f"http://{os.getenv('HOST')}:8000/api/tg/create_chat/", data=data) as response:
             response_text = await response.text()
             print(response_text)
             
 async def hello():
     async with aiohttp.ClientSession() as session:
+        logging.info(f"{os.getenv('HOST')}:8000")
         async with session.get(f"http://{os.getenv('HOST')}:8000/") as response:
             response_text = await response.text()
             return response_text
@@ -30,6 +32,7 @@ async def send_prompt(chat_id, prompt):
     data = {"chat_id": chat_id,
             "prompt":prompt}
     async with aiohttp.ClientSession() as session:
+        logging.info(f"{os.getenv('HOST')}:8000")
         async with session.post(f"http://{os.getenv('HOST')}:8000/api/tg/send_prompt/", data=data) as response:
             response_text = await response.text()
             print(response_text)
