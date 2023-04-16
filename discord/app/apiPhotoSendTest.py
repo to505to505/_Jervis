@@ -20,7 +20,8 @@ async def root():
 @app.post("/current_prompt/")
 async def current_prompt(input_text):
     files = {
-        "file" : ("/Users/pavelsedyh/Downloads/Andy_Gandy_defender_of_the_infinity_surreal_38aadc1c-702a-4ef1-b827-c3b1a87bd3c8.png", open("/Users/pavelsedyh/Downloads/Andy_Gandy_defender_of_the_infinity_surreal_38aadc1c-702a-4ef1-b827-c3b1a87bd3c8.png", 'rb')) # The picture that we want to send in binary
+        "file" : ("/Users/pavelsedyh/Downloads/Andy_Gandy_defender_of_the_infinity_surreal_38aadc1c-702a-4ef1-b827-c3b1a87bd3c8.png",
+                  open("/Users/pavelsedyh/Downloads/Andy_Gandy_defender_of_the_infinity_surreal_38aadc1c-702a-4ef1-b827-c3b1a87bd3c8.png", 'rb')) # The picture that we want to send in binary
     }
 
     msg = {"content":f"{input_text}"}

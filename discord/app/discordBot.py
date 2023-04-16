@@ -45,11 +45,11 @@ async def on_message(message):
         logging.info("embeds: " + str(message.embeds))
         
         logging.info(message.attachments)
-        await asyncio.sleep(30)
+        await asyncio.sleep(10)
         logging.info(message.attachments)
         
         if message.attachments:
-            attachments = await message.embeds
+            attachments = await message.attachments
             attachment = attachments[0]
             filename = attachment.url.split("_")[-1]
             
