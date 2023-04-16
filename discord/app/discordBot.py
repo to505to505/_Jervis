@@ -28,7 +28,8 @@ service = build('drive', 'v3', credentials=credentials)
 bot = commands.Bot(command_prefix='.', help_command=None, intents=disnake.Intents.all())
 url = 'https://discord.com/api/v9/interactions'
 auth = {
-  'authorization': os.getenv("AUTH_TOKEN")
+  'authorization': os.getenv("AUTH_TOKEN"),
+  #'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI',
 }
 
 #bot async funcrions
@@ -49,27 +50,29 @@ async def on_message(message):
         logging.info(message.attachments)
 
         if message.attachments:
-            attachments = await message.attachments
-            attachment = attachments[0]
+            attachment = message.attachments[0]
             filename = attachment.url.split("_")[-1]
 
-            await attachment.save(PICTURE_PATH + filename)
-            await message.channel.send(f"Image: {attachment.url}")
-
-            logging.info('saved')
-
             FILE_PATH = PICTURE_PATH + filename
+
+            await attachment.save(FILE_PATH)
+            await message.channel.send(f"Image: {attachment.url}")
+            logging.info('saved')
 
             creds = service_account.Credentials.from_service_account_file(
                 SERVICE_ACCOUNT_FILE, scopes=SCOPES)
             drive_service = build('drive', 'v3', credentials=creds)
-            file_metadata = {'name': filename, 'parents': ['1-6d1bVS_vi7-zWUyZKoyO7WPsujWSmSV']}
+            file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
             media = MediaFileUpload(FILE_PATH, resumable=True)
             file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-            os.remove(PICTURE_PATH + filename)
+            
+            logging.info(FILE_PATH)
+            await asyncio.sleep(3)
+            os.remove(FILE_PATH)
             logging.info(f"File ID: {file.get('id')}")
 
         else:
             logging.warning("There are no attachment...")
 
 bot.run(os.getenv("APP_TOKEN"))
+#bot.run("MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4")

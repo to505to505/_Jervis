@@ -7,6 +7,8 @@ class Chat(models.Model):
     def __str__(self) -> str:
         return f"tg_id: {self.chat_id}"
     
+class Client(mo)
+    
 class Image(models.Model):
     chat = models.ForeignKey(Chat, null=True, on_delete=models.SET_NULL)
     image_url = models.URLField()

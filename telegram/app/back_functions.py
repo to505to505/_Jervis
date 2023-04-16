@@ -38,8 +38,6 @@ service = build('drive', 'v3', credentials=creds)
 
 
 
-
-
 async def send_id(chat_id):
     data = {"chat_id": chat_id}
     async with aiohttp.ClientSession() as session:
