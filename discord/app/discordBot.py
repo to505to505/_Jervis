@@ -43,32 +43,32 @@ async def on_message(message):
         logging.info("type: " + str(message.type))
         logging.info("content: " + str(message.content))
         logging.info("embeds: " + str(message.embeds))
-        
+
         logging.info(message.attachments)
         await asyncio.sleep(10)
         logging.info(message.attachments)
-        
+
         if message.attachments:
             attachments = await message.attachments
             attachment = attachments[0]
             filename = attachment.url.split("_")[-1]
-            
+
             await attachment.save(PICTURE_PATH + filename)
             await message.channel.send(f"Image: {attachment.url}")
-        
+
             logging.info('saved')
-            
+
             FILE_PATH = PICTURE_PATH + filename
-            
+
             creds = service_account.Credentials.from_service_account_file(
                 SERVICE_ACCOUNT_FILE, scopes=SCOPES)
             drive_service = build('drive', 'v3', credentials=creds)
             file_metadata = {'name': filename, 'parents': ['1-6d1bVS_vi7-zWUyZKoyO7WPsujWSmSV']}
             media = MediaFileUpload(FILE_PATH, resumable=True)
             file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-        
+            os.remove(PICTURE_PATH + filename)
             logging.info(f"File ID: {file.get('id')}")
-            
+
         else:
             logging.warning("There are no attachment...")
 
