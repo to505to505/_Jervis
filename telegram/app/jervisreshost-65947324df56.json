@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "jervisreshost",
+  "private_key_id": "65947324df561fa9464d2567735a56ddde9c13c6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC57Cli7XcW/XiE\nxIXGdTKV10/zzw0ShGq4xrD5w1bMiCs2H1h8JaqiYVCduzznRfmDnkpoMLxN6yS3\nK2Crcf1XQJhDiiDGGAmMkPpfEHJWveWWNRQIbwsyqUbUNen5R6GAv50PRSbWUPtP\nOuQQDNkThqs2824m9Uq+hdHLmrwHC9GGTPXBjsiYiw814mSJ66IwceKC5VQF4DVJ\ntqpvgSQrzx/JbNB8k1kqQajNfhUlmHrhgbMZWXs5ok9DFXk7KohxczeRmSEm4uNN\nd5ZrgqJAFJjT1PQp/Fgp+UUTnVnpWXYyH82zezgkdvWq/IwQmAEc/JXyaAFSc/Zb\n9/pWqiITAgMBAAECggEAXE/FFsDX1drhKW6YCzrqdFp08JV3pJ+Ji5ffjAswgBoF\n9nfmy7E6ASi3SbGLIjtskSyZPhUgkcF0N9v6QfW1d0pzr2kYL7MEnr3nCidU1fuw\nT/2npi5YTX2d1MS2GJa3ugCpf0jy6QtJVAPl85AlgdvmC8EfConU5Db2PRTlUct0\nEJcAT7ou1giCRl69apko5G8pX9iQsK4pkwfGk1A1+pmObU2Qs1008urL/1fJLs7Z\nZ6ueg9OQE5GMhR+0iJRA0r3pWCFJl37kNP++fOj224aerMyWmic0u37K3XpGc5AJ\n8NMsVXAYZVoGOlkRtQXDR2XPr47Q+ibxkoBUxzG/oQKBgQDj+qWgp9KHzf7Yz7ai\nBGqZ8CElWdd2sfCmjWh/Kz2hmzqpKkWMCz18OOjuOn2AVq9rcfXuDSzVGqtw1+wX\nc8moNdSdYYWGoyyTLLjwrTcIzJvHlxM/XVpuop/Ehovw5xLaxYfJvHsn7BMZa5U2\nyK/Zdp55XxmLVjn8VXd8CkEm8wKBgQDQxjS5tOA23GNe36qeaV2mGuvgfRsHwjCs\nd/+HrAszdb58lhUW/FQsTMNuOW0bfifWExu0n/dTH4mkQPuizOIhKounMDOQH5if\nuQ2jyHzj6Gic6IDGFQB8lnhyEazapHQjsyO5DAnC3WeYwi4yLAx75nJSfM9L6CxW\nOjT883QgYQKBgBZijw7GS7q/9E0PoCwqaNkypd6IAssJz8payi7qbQPIPStNFkUY\n+XGQGPcDUT1fxZu0NeSo8IUAOGM9IFZxLRTSLE1DvRuqO/87ffFL4MKBbK5dXCt1\nnCKO30cpuuXtmoFWse2SDzmtSXbOhHk7nWCp8AeU2eo/jjQDpFbOnvUXAoGBAIse\nOM4y2GHWVCVJV/F9dtkUAXAzDYsK/NJAmDc5DrG42Tk97UnG1PQ8JtJRVAJI+5Ss\nYP7oxa9PSbH5V3Uxn9HH/w1mkkWMuHBeqNcl5wsbuHIugHj+T7e1sQcZ/hwoD/gm\nDDzn561BSiJB6vSl45/AfRe4cY48ZScEXIDeXdihAoGBAImPMO2XmoVXzQjwzvfM\nCGNoFw1NC7ORjJ5kRPsnUCRmIr9oK/eBMwtz2eBRYIfhblze22IbilNhlRG0eWs4\n5oSiQUzBtN3JyZFspN016MrIl/8RuC4cidnC7/muvvqMS3hxy+4EvoYBOAGnnu8Y\ner2Td9yOoCrv5FQEZSiVTMWe\n-----END PRIVATE KEY-----\n",
+  "client_email": "telegrampart@jervisreshost.iam.gserviceaccount.com",
+  "client_id": "103115324466029546728",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telegrampart%40jervisreshost.iam.gserviceaccount.com"
+}
