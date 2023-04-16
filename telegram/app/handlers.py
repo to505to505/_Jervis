@@ -116,7 +116,7 @@ async def handle_generate(message: types.Message):
         prompt = message.text
         mess_id = message.id
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
-        result = await send_prompt(chat_id, prompt)
+        result = await send_prompt(chat_id, prompt, mess_id)
         photo_path = await download_photo(chat_id, mess_id, result)
         caption = 'Держи фото!'
         with open(photo_path, 'rb') as photo_file:
@@ -131,14 +131,15 @@ async def handle_generate(message: types.Message):
             caption = message.caption
         else:
             await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
+            return
 
         file_id = message.photo[-1].file_id
         file = await bot.download_file_by_id(file_id)
         with open("photo.jpg", "wb") as f:
             f.write(file.read())
-        await bot.send_message(chat_id, f'Изображение генерируется по картинке-референсу и по запросу: \n{prompt}\n Пожалуйста, подождите!')
-        result = send_prompt_photo(chat_id, caption, file)
-        send_result(chat_id, caption, result)
+        await bot.send_message(chat_id, f'Изображение генерируется по картинке-референсу и по запросу: \n{caption}\n Пожалуйста, подождите!')
+   #     result = send_prompt_photo(chat_id, caption, file)
+ #       send_result(chat_id, caption, result)
 
 
 
