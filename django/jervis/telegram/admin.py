@@ -7,5 +7,9 @@ class ImageAdmin(admin.ModelAdmin):
 class ChatAdmin(admin.ModelAdmin):
     pass
 
+class ClientAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Chat, ChatAdmin)
 admin.site.register(Image, ImageAdmin)
+admin.site.register(Client, ClientAdmin)

@@ -1,4 +1,5 @@
 import time
+import aiohttp
 import requests
 import os
 from pathlib import Path
@@ -27,8 +28,8 @@ auth = {
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/current_prompt/")
-async def current_prompt(input_text):
+@app.post("/generate_image/")
+async def generate_image(input_text):
     file = open(IMG_PATH, 'rb')
     files = {
         "file" : (#IMG_PATH,
@@ -40,3 +41,5 @@ async def current_prompt(input_text):
     requests.post(url, headers = auth, data = msg, files=files)
     print(f"sent a /generate command with prompt: {input_text}")
     file.close()
+    
+    return

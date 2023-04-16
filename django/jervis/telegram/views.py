@@ -1,4 +1,6 @@
 import aiohttp
+import logging
+
 from django.shortcuts import render
 from django.http import QueryDict
 from django.http import HttpRequest, HttpResponse
@@ -23,7 +25,7 @@ class CreateTgChat(APIView):
     def post(self, request, format=None):
         chat_id = request.data.get("chat_id")
         try:
-            chat_id = Chat.objects.get(chat_id=chat_id)
+            chat = Chat.objects.get(chat_id=chat_id)
             return Response("User is already created", status=status.HTTP_409_CONFLICT)
         except Chat.DoesNotExist: 
             serializer = ChatSerializer(data=request.data)
@@ -39,11 +41,9 @@ class SendPrompt(APIView):
     async def post(self, request, format=None):
         chat_id = request.data.get("chat_id")
         prompt = request.data.get("prompt")
+        tg_message_id = request.data.get("tg_message_id")
         
-        try:
-            chat = Chat.objects.get(chat_id=chat_id)
-        except Chat.DoesNotExist:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        chat = Chat.objects.get(chat_id=chat_id)
         
         if chat.generation_amount == 0:
             return Response(status=status.HTTP_402_PAYMENT_REQUIRED)
@@ -54,12 +54,24 @@ class SendPrompt(APIView):
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.post("http://localhost:8080/generate_image", data=data) as response:
-                    img_url = await response.text()
-                    print(img_url)
+                    response_data = await response.json()
+                    
+                    image_url = response_data["image_url"]
+                    messageid_sseed = response_data["messageid_sseed"]
+                    
+                    logging.info(image_url)
                     chat.generation_amount -= 1
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
                 
         chat.generation_amount -= 1
         
-        return Response(img_url)
+        new_dict = QueryDict('', mutable=True)
+        new_dict.update(request.data)
+        new_dict["image_url"] = image_url
+        serializer = ImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            data = {"image_url": image_url}
+            return Response(data=data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
