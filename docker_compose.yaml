@@ -30,6 +30,7 @@ services:
       PASSWORD: password
       USER: postgres
       DB: postgres
+      DISCORD_HOST: jervis_discord
     networks:
       - jervis_net
     restart: always
@@ -52,7 +53,7 @@ services:
     environment:
       HOST: jervis_django
       APP_TOKEN: MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4
-      AUTH: 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
+      AUTH_TOKEN: MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI
     networks:
       - jervis_net
     restart: always

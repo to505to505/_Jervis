@@ -1,8 +1,13 @@
+import time
 import requests
-import nest_asyncio
-from fastapi import FastAPI
+import logging
 
-#nest_asyncio.apply()
+from fastapi import FastAPI
+import disnake
+from disnake.ext import commands
+from uvicorn import Config, Server
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 app = FastAPI()
 
@@ -11,13 +16,14 @@ auth = {
   'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
 }
 
-   
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/generate_prompt/")
-async def current_prompt(input_text):
+@app.post("/generate_image/")
+async def generate_image(input_text):
+    logging.info(f"sent a /generate_image command with prompt: {input_text}")
     msg = {"type":2,
     "application_id":"1032699319368814652",
     "guild_id":"1094995526769987704",
@@ -33,4 +39,5 @@ async def current_prompt(input_text):
     "value":input_text}],
     }}
     requests.post(url, headers = auth, json = msg)
-    print(f"sent a /generate command with prompt: {input_text}")
+    logging.info(f"sent a /generate command with prompt: {input_text}")
+    return {"result": "Your request is gotten"}
