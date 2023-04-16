@@ -114,10 +114,10 @@ async def handle_generate(message: types.Message):
     @dp.message_handler(content_types=types.ContentTypes.TEXT)
     async def handle_prompt(message: types.Message):
         prompt = message.text
-        mess_id = message.id
+        tg_message_id = message.id
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
-        result = await send_prompt(chat_id, prompt, mess_id)
-        photo_path = await download_photo(chat_id, mess_id, result)
+        result = await send_prompt(chat_id, prompt, tg_message_id)
+        photo_path = await download_photo(chat_id, tg_message_id, result)
         caption = 'Держи фото!'
         with open(photo_path, 'rb') as photo_file:
             await bot.send_photo(chat_id=chat_id, photo=photo_file, caption=caption)

@@ -51,10 +51,10 @@ async def hello():
             response_text = await response.text()
             return response_text
 
-async def send_prompt(chat_id, prompt, mess_id):
+async def send_prompt(chat_id, prompt, tg_message_id):
     data = {"chat_id": chat_id,
             "prompt": prompt,
-            "mess_id": mess_id}
+            "mess_id": tg_message_id}
     async with aiohttp.ClientSession() as session:
         async with session.post(f"http://{os.getenv('HOST')}:8000/api/tg/send_prompt/", data=data) as response:
             response_text = await response.text()
