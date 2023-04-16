@@ -16,10 +16,13 @@ from handlers import send_welcome
 
 logging.basicConfig(level=logging.INFO)
 
-#bot = Bot(token=os.getenv("APP_TOKEN"))
-bot = Bot(token = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
-dp = Dispatcher(bot)
 
+
+
+
+bot = Bot(token=os.getenv("APP_TOKEN"))
+dp = Dispatcher(bot)
+    
 
 # dp.register_message_handler(handle_photo, Text(equals="Option 1"), content_types=types.ContentTypes.PHOTO)
 dp.register_message_handler(send_welcome, commands=['start'])

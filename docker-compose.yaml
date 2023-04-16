@@ -24,7 +24,7 @@ services:
 
   django:
     image: jervis_django:1
-    container_name: jervis_django
+    container_name: jervisdjango
     environment:
       HOST: jervis_db
       PASSWORD: password
@@ -36,6 +36,7 @@ services:
     restart: always
     ports:
         - '8000:8000'
+    hostname: jervisdjango
     healthcheck:
        interval: 5s 
        timeout: 5s
@@ -45,26 +46,26 @@ services:
       db:
         condition: service_healthy
     volumes:
-       - jervis_backend_vol:/jervis
+       - jervis_backend_vol:/var/lib/app
 
   discord:
     image: jervis_discord:1
     container_name: jervis_discord
     environment:
-      HOST: jervis_django
+      HOST: jervisdjango
       APP_TOKEN: MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4
       AUTH_TOKEN: MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI
     networks:
       - jervis_net
     restart: always
     ports:
-        - '8080:8080'
+        - '80:80'
 
   tg:
     image: jervis_tg:1
     container_name: jervis_tg
     environment:
-      HOST: jervis_django
+      HOST: jervisdjango
       APP_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
     networks:
       - jervis_net
