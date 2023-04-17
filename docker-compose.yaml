@@ -31,6 +31,7 @@ services:
       USER: postgres
       DB: postgres
       DISCORD_HOST: jervis_discord
+      TG_HOST: jervis_tg
     networks:
       - jervis_net
     restart: always
@@ -70,6 +71,8 @@ services:
     networks:
       - jervis_net
     restart: always
+    ports:
+        - '81:81'
 
 volumes:
  jervis_postgres_vol:

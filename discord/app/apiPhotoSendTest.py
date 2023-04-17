@@ -4,11 +4,18 @@ import requests
 import os
 from pathlib import Path
 import logging
+import json
 
 from uvicorn import Config, Server
 from fastapi import FastAPI
 import disnake
 from disnake.ext import commands
+from pydantic import BaseModel
+
+class ImageGenerationRequest(BaseModel):
+    chat_id: str
+    prompt: str
+    tg_message_id: str
 
 app = FastAPI()
 
@@ -19,8 +26,8 @@ logging.info(IMG_PATH)
 
 url = 'https://discord.com/api/v9/channels/1095343240594595900/messages'
 auth = {
-  'authorization': os.getenv("AUTH_TOKEN")
-  #'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
+  #'authorization': os.getenv("AUTH_TOKEN")
+  'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
 }
 
 
@@ -29,7 +36,12 @@ async def root():
     return {"message": "Hello World"}
 
 @app.post("/generate_image/")
-async def generate_image(input_text):
+async def generate_image(request: ImageGenerationRequest):
+    data = request.json()
+    data = json.loads(data)
+    input_text = data.get("prompt")
+    logging.info(data, input_text)
+    
     file = open(IMG_PATH, 'rb')
     files = {
         "file" : (#IMG_PATH,
@@ -42,4 +54,4 @@ async def generate_image(input_text):
     print(f"sent a /generate command with prompt: {input_text}")
     file.close()
     
-    return
+    return {"result": "image is generating"}
