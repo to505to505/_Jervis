@@ -17,10 +17,8 @@ from handlers import send_welcome, handle_generate
 logging.basicConfig(level=logging.INFO)
 
 
-
-
-
-bot = Bot(token=os.getenv("APP_TOKEN"))
+bot = Bot(token = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
+#bot = Bot(token=os.getenv("APP_TOKEN"))
 dp = Dispatcher(bot)
     
 

@@ -28,8 +28,9 @@ from aiogram.types import CallbackQuery
 from back_functions import send_id
 from back_functions import send_prompt
 
-#bot = Bot(token = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
-bot = Bot(token = os.getenv("APP_TOKEN"))
+bot = Bot(token = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
+#bot = Bot(token = os.getenv("APP_TOKEN"))
+
 dp = Dispatcher(bot)
 
 
@@ -97,7 +98,7 @@ async def handle_generate(message: types.Message):
         await send_prompt(chat_id, prompt, tg_message_id)
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
         
-
+    dp.register_message_handler(handle_prompt)
 
 
     #промпт + референс
@@ -108,7 +109,6 @@ async def handle_generate(message: types.Message):
         else:
             await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
             return
-
         file_id = message.photo[-1].file_id
         file = await bot.download_file_by_id(file_id)
         with open("photo.jpg", "wb") as f:
@@ -128,7 +128,7 @@ async def handle_help(message: types.Message):
     button3 = InlineKeyboardButton('FAQ', callback_data=callback_data.new(action="faq"))
     keyboard = InlineKeyboardMarkup().row(button1, button2)
     keyboard.add(button3)
-    await bot.send_message(chat_id, f'При обращении в поддержк, пожалуйста, сообщите свой id: {chat_id}')
+    await bot.send_message(chat_id, f'При обращении в поддержку, пожалуйста, сообщите свой id: {chat_id}')
 
 
 
