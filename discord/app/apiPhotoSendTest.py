@@ -13,9 +13,12 @@ from disnake.ext import commands
 from pydantic import BaseModel
 
 class ImageGenerationRequest(BaseModel):
-    chat_id: str
     prompt: str
-    tg_message_id: str
+    
+class PushButtonRequest(BaseModel):
+    method: str
+    image_number: int
+    messageid_sseed: str
 
 app = FastAPI()
 
