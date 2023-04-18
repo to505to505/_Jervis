@@ -8,4 +8,4 @@ WORKDIR /app/
 
 COPY ./app ./
 
-CMD [ "python", "main.py"]
+CMD bash -c "python main.py & python ./tg_api/main_api.py"

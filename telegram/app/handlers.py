@@ -25,7 +25,7 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
 
-from back_functions import send_id, hello
+from back_functions import send_id
 from back_functions import send_prompt, download_photo
 
 #bot = Bot(token = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ')
