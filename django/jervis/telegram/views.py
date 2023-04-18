@@ -23,6 +23,12 @@ TG_HOST = "localhost"
 DS_HOST = "localhost"
 #DS_HOST = os.getenv("DISCORD_HOST")
 
+async def make_async_request(url, data):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=data) as response:
+            return await response.text()
+
+
 class HelloWorldView(APIView):
     def get(self, request):
         return Response({"message": "Hello, world!"})
@@ -55,20 +61,16 @@ class SendPrompt(APIView):
         chat = Chat.objects.get(chat_id=chat_id)
         
         if chat.generation_amount == 0:
-            return Response(status=status.HTTP_402_PAYMENT_REQUIRED)
-        
-        data = {"chat_id": chat_id,
-                "prompt":prompt,
-                "tg_message_id":tg_message_id}
-    
-        print(data)
-        
-        requests.post(f"http://{DS_HOST}:80/generate_image/", json=data)
+            return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
 
         serializer = ImageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(chat=chat)
-            return Response("Image has sent!")
+            data = {"prompt":prompt,}
+            
+            make_async_request(f"http://{DS_HOST}:80/generate_image/", data=data)
+            
+            return Response("Image has sent and sabed in database!")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class SaveImage(APIView):
@@ -78,6 +80,7 @@ class SaveImage(APIView):
     def put(self, request, format=None):
         prompt = request.data.get("prompt")
         image_url = request.data.get("image_url")
+        messageid_sseed = request.data.get("messageid_sseed")
         
         image = Image.objects.get(prompt = prompt)
         
@@ -94,12 +97,11 @@ class SaveImage(APIView):
             chat.generation_amount -= 1
             data_for_tg = {"image_url": image_url,
                            "tg_message_id": tg_message_id,
-                           "chat_id": chat_id}
+                           "chat_id": chat_id,
+                           "prompt": prompt}
             
-            print(data_for_tg)
             serializer.save()
-            requests.post(f"http://{TG_HOST}:81/load_image/", json=data_for_tg)
-            
+            make_async_request(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -110,4 +112,31 @@ class PushButton(APIView):
     def post(self, request, format=None):
         tg_message_id = request.data.get("tg_message_id")
         chat_id = request.data.get("chat_id")
+        method = request.data.get("method")
+        image_number = request.data.get("image_number")
+        
+        new_data = QueryDict('', mutable=True)
+        new_data.update(request.data)
+        new_data["prompt"] = f"{method} {tg_message_id}"
+        
+        chat = Chat.objects.get(chat_id=chat_id)
+        
+        if chat.generation_amount == 0:
+            return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
+        
+        messageid_sseed = Image.objects.get(tg_message_id = tg_message_id).messageid_sseed
+        
+        serializer = ImageSerializer(data=new_data)
+        if serializer.is_valid():
+            data = {"method":method,
+                    "image_number":image_number,
+                    "messageid_sseed":messageid_sseed}
+            
+            make_async_request(f"http://{DS_HOST}:80/push_button/", data=data)
+            serializer.save(chat=chat)
+            return Response("Image has sent and sabed in database!", status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        
         

@@ -12,3 +12,5 @@ tzdata==2022.6
 psycopg2
 requests
 aiohttp
+celery
+django-celery-beat

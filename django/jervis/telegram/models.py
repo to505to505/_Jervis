@@ -20,3 +20,6 @@ class Image(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
     is_ended = models.BooleanField(default=False)
+    
+    def __str__(self) -> str:
+        return f"{self.pk} > {self.prompt[:20]}"
