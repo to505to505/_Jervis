@@ -1,26 +1,23 @@
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Command
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import Message
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import logging
 import time
 import aiohttp
 import os
+import aiohttp
+
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Command
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.types import Message
-from aiogram.dispatcher.filters import Text
 from aiogram.types import InputFile
-from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import Message
 from aiogram.dispatcher.filters import Text
 from aiogram.types import InputFile
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-import aiohttp
+
+
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -42,14 +39,7 @@ HOST = "localhost"
 #HOST = os.getenv('HOST')
 
 bot = Bot(token = BOT_TOKEN)
- 
 dp = Dispatcher(bot)
-
-# Set up the Drive API client
-#SCOPES = []
-SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
-service = build('drive', 'v3', credentials=credentials)
 
 
 async def send_id(chat_id):
@@ -64,9 +54,10 @@ async def send_prompt(chat_id, prompt, tg_message_id):
     make_async_request_post(f"http://{HOST}:8000/api/tg/send_prompt/", data=data)
 
 
-async def push_button(chat_id, prompt, method, image_number):
+async def push_button(chat_id, original_message_id, tg_message_id, method, image_number):
     data = {"chat_id": chat_id,
-            "tg_message_id": prompt,
+            "tg_message_id": tg_message_id,
+            "original_message_id": original_message_id,
             "Method": method,
             "image_number": image_number}   
     make_async_request_post(f"http://{HOST}:8000/api/tg/push_button/", data=data) 
