@@ -23,13 +23,19 @@ TG_HOST = "localhost"
 DS_HOST = "localhost"
 #DS_HOST = os.getenv("DISCORD_HOST")
 
-async def make_async_request(url, data):
+async def make_async_request(url: str, data: dict):
+    '''
+    Make async http request
+    '''
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json=data) as response:
             return await response.text()
 
 
 class HelloWorldView(APIView):
+    '''
+    Just test function. If you get a response, then the API is working
+    '''
     def get(self, request):
         return Response({"message": "Hello, world!"})
     

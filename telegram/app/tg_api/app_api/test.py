@@ -1,9 +1,17 @@
-import requests
+import aiohttp
+
+async def make_async_request(url: str, data: dict):
+    '''
+    Make async http request
+    '''
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=data) as response:
+            return await response.text()
 
 url = "http://your-fastapi-app.com/my-handle"
 data = {"name": "John", "age": 30}
 
-response = requests.post(url, json=data)
+response = make_async_request.post(url, json=data)
 print(response.content)
 if response.status_code == 200:
     print("Data was successfully posted to the handle")

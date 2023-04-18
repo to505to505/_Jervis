@@ -67,7 +67,7 @@ services:
     container_name: jervis_tg
     environment:
       HOST: jervisdjango
-      APP_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
+      BOT_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
     networks:
       - jervis_net
     restart: always
