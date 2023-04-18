@@ -79,12 +79,50 @@ class SendPrompt(APIView):
             return Response("Image has sent and sabed in database!")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
+class PushButton(APIView):
+    '''
+    Push button under midjourney image
+    '''
+    def post(self, request, format=None):
+        origin_message_id = request.data.get("original_message_id")
+        tg_message_id = request.data.get("tg_message_id")
+        chat_id = request.data.get("chat_id")
+        method = request.data.get("method")
+        image_number = request.data.get("image_number")
+        
+        chat = Chat.objects.get(chat_id=chat_id)
+        
+        if chat.generation_amount == 0:
+            return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
+        
+        
+        origin_image = Image.objects.get(tg_message_id = origin_message_id)
+        messageid_sseed = origin_image.messageid_sseed
+        origin_prompt = origin_image.prompt
+        
+        new_data = QueryDict('', mutable=True)
+        new_data.update(request.data)
+        new_data["prompt"] = f"{origin_prompt} {method}"
+        
+        serializer = ImageSerializer(data=new_data)
+        if serializer.is_valid():
+            data = {"method":method,
+                    "image_number":image_number,
+                    "messageid_sseed":messageid_sseed}
+            
+            make_async_request(f"http://{DS_HOST}:80/push_button/", data=data)
+            serializer.save(chat=chat)
+            return Response("Image has sent and sabed in database!", status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
 class SaveImage(APIView):
     '''
     Load and save generated image url from discord
     '''
     def put(self, request, format=None):
-        prompt = request.data.get("prompt")
+        prompt = request.data.get("prompt") 
         image_url = request.data.get("image_url")
         messageid_sseed = request.data.get("messageid_sseed")
         
@@ -106,41 +144,10 @@ class SaveImage(APIView):
                            "chat_id": chat_id,
                            "prompt": prompt}
             
-            serializer.save()
             make_async_request(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
+            chat.prompt += "jervis_token_notcopy_ifsomeonegetitoutappwillcpllapse_43"
+            serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class PushButton(APIView):
-    '''
-    Push button under midjourney image
-    '''
-    def post(self, request, format=None):
-        tg_message_id = request.data.get("tg_message_id")
-        chat_id = request.data.get("chat_id")
-        method = request.data.get("method")
-        image_number = request.data.get("image_number")
-        
-        new_data = QueryDict('', mutable=True)
-        new_data.update(request.data)
-        new_data["prompt"] = f"{method} {tg_message_id}"
-        
-        chat = Chat.objects.get(chat_id=chat_id)
-        
-        if chat.generation_amount == 0:
-            return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
-        
-        messageid_sseed = Image.objects.get(tg_message_id = tg_message_id).messageid_sseed
-        
-        serializer = ImageSerializer(data=new_data)
-        if serializer.is_valid():
-            data = {"method":method,
-                    "image_number":image_number,
-                    "messageid_sseed":messageid_sseed}
-            
-            make_async_request(f"http://{DS_HOST}:80/push_button/", data=data)
-            serializer.save(chat=chat)
-            return Response("Image has sent and sabed in database!", status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
