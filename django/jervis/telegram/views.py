@@ -1,5 +1,5 @@
 import aiohttp
-import requests
+import pickle
 import logging
 import os
 import json
