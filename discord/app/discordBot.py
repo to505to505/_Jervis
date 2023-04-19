@@ -12,6 +12,8 @@ from google.oauth2 import service_account
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 from googleapiclient.discovery import build
 
+from JervisRequests import get_image, send_image
+
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
@@ -41,6 +43,13 @@ auth = {
   'authorization': AUTH_TOKEN,
 }
 
+def parce_get_prompt(url):
+    #''.join(url.split('/')[6].split('_')[:-1])
+    return url[url.find("_")+1:url.rfind("_")].replace("_", " ")
+
+def parce_get_sseed(url):
+    return url.split("_")[-1]
+
 #bot async functions
 @bot.event
 async def on_ready():
@@ -67,7 +76,8 @@ async def on_message(message):
 
             # Save image locally
             await attachment.save(FILE_PATH)
-            await message.channel.send(f"Image: {attachment.url}")
+            file_ds_url = attachment.url
+            await message.channel.send(f"Image: {file_ds_url}")
             logging.info('saved')
 
             # Connecting to google drive and load image
@@ -77,21 +87,19 @@ async def on_message(message):
             file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
             media = MediaFileUpload(FILE_PATH, resumable=True)
             file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-            
+
             # Getting link on google drive
             file_id = file.get('id')
-            file_url = f'https://drive.google.com/file/d/{file_id}'
+            file_drive_url = f'https://drive.google.com/file/d/{file_id}'
+
+            messageid_sseed = f"{message.id}_{parce_get_sseed(file_drive_url)}"
             
-            data = {"image_link": file_url,
-                    "messageid_sseed": None,
-                    "prompt": None,}
-            
-            requests.put(f"http://{HOST}:8000/api/ds/load_image/", data=data)
-            
+            send_image(messageid_sseed, file_drive_url, parce_get_prompt(file_ds_url))
+
             logging.info(file_url)
             logging.info(FILE_PATH)
             logging.info(f"File ID: {file_id}")
-            
+
             # Удаляем локальную картинку
             # os.remove(FILE_PATH)
 

@@ -1,8 +1,6 @@
 import requests
 import os
 
-DS_HOST = 'localhost'
-
 def get_image(prompt):
     url = 'https://discord.com/api/v9/interactions'
     auth = {
@@ -39,7 +37,7 @@ def get_image(prompt):
     # }}
     requests.post(url, headers = auth, json = msg)
 
-def send_image(mesageid_sseed, img_url, prompt):
+def send_image(mesageid_sseed, img_url, prompt, DS_HOST='localhost'):
     url = f'http://{DS_HOST}:8000/send_image/'
     auth = {
         'authorization': os.getenv("AUTH_TOKEN")
