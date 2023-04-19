@@ -83,7 +83,6 @@ async def handle_generate(message: types.Message):
         else:
             await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
             return
-
         file_id = message.photo[-1].file_id
         file = await bot.download_file_by_id(file_id)
         with open("photo.jpg", "wb") as f:

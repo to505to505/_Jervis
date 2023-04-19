@@ -44,20 +44,20 @@ dp = Dispatcher(bot)
 
 async def send_id(chat_id):
     data = {"chat_id": chat_id}
-    make_async_request_post(f"http://{HOST}:8000/api/tg/create_chat/", data=data)
+    await make_async_request_post(f"http://{HOST}:8000/api/tg/create_chat/", data=data)
 
 
 async def send_prompt(chat_id, prompt, tg_message_id):
     data = {"chat_id": chat_id,
             "prompt": prompt,
             "mess_id": tg_message_id}
-    make_async_request_post(f"http://{HOST}:8000/api/tg/send_prompt/", data=data)
+    await make_async_request_post(f"http://{HOST}:8000/api/tg/send_prompt/", data=data)
 
 
 async def push_button(chat_id, original_message_id, tg_message_id, method, image_number):
     data = {"chat_id": chat_id,
             "tg_message_id": tg_message_id,
             "original_message_id": original_message_id,
-            "Method": method,
+            "method": method,
             "image_number": image_number}   
-    make_async_request_post(f"http://{HOST}:8000/api/tg/push_button/", data=data) 
+    await make_async_request_post(f"http://{HOST}:8000/api/tg/push_button/", data=data) 
