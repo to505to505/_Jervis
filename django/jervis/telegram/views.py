@@ -68,6 +68,8 @@ class SendPrompt(APIView):
         
         if chat.generation_amount == 0:
             return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
+        
+        
 
         serializer = ImageSerializer(data=request.data)
         if serializer.is_valid():
@@ -145,7 +147,7 @@ class SaveImage(APIView):
                            "prompt": prompt}
             
             make_async_request(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
-            chat.prompt += "jervis_token_notcopy_ifsomeonegetitoutappwillcpllapse_43"
+            chat.prompt += ":jervis_token_notcopy_ifsomeonegetitoutappwillcpllapse_43"
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

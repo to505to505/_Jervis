@@ -12,7 +12,7 @@ from aiogram.types import InputFile
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
-from handlers import send_welcome, handle_generate, reply_command_handler
+from handlers import send_welcome, handle_generate
 
 logging.basicConfig(level=logging.INFO)
 
