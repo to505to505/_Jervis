@@ -28,6 +28,7 @@ dp.register_message_handler(handle_generate, Text(equals='Сгенерирова
 dp.callback_query_handler(button_gen_handler, filters=lambda c: c.data['tag'] == 'regen')
 dp.register_message_handler(handle_help, Text(equals='Техническая поддержка'))
 dp.register_message_handler(handle_prompt, content_types=types.ContentTypes.TEXT)
+#@dp.message_handler(content_types=types.ContentTypes.PHOTO)
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=False)
