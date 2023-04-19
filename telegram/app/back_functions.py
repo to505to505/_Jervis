@@ -50,7 +50,7 @@ async def send_id(chat_id):
 async def send_prompt(chat_id, prompt, tg_message_id):
     data = {"chat_id": chat_id,
             "prompt": prompt,
-            "mess_id": tg_message_id}
+            "tg_message_id": tg_message_id}
     await make_async_request_post(f"http://{HOST}:8000/api/tg/send_prompt/", data=data)
 
 

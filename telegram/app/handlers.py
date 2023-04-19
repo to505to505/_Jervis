@@ -67,27 +67,28 @@ async def handle_generate(message: types.Message):
     chat_id = message.chat.id
     await bot.send_message(chat_id, 'Напишите prompt и по желанию прикрепите картинку-референс.')
 
-    @dp.message_handler(content_types=types.ContentTypes.TEXT)
-    async def handle_prompt(message: types.Message):
+
+async def handle_prompt(message: types.Message):
         ''''Handling prompt without a reference-photo'''
+        chat_id = message.chat.id
         prompt = message.text
-        tg_message_id = message.id
+        tg_message_id = message.message_id
         await send_prompt(chat_id, prompt, tg_message_id)
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
         
-    @dp.message_handler(content_types=types.ContentTypes.PHOTO)
-    async def handle_photo(message: types.Message):
-        '''' Handling prompt with photo'''
-        if message.caption:
-            caption = message.caption
-        else:
-            await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
-            return
-        file_id = message.photo[-1].file_id
-        file = await bot.download_file_by_id(file_id)
-        with open("photo.jpg", "wb") as f:
-            f.write(file.read())
-        await bot.send_message(chat_id, f'Изображение генерируется по картинке-референсу и по запросу: \n{caption}\n Пожалуйста, подождите!')
+    # @dp.message_handler(content_types=types.ContentTypes.PHOTO)
+    # async def handle_photo(message: types.Message):
+    #     '''' Handling prompt with photo'''
+    #     if message.caption:
+    #         caption = message.caption
+    #     else:
+    #         await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
+    #         return
+    #     file_id = message.photo[-1].file_id
+    #     file = await bot.download_file_by_id(file_id)
+    #     with open("photo.jpg", "wb") as f:
+    #         f.write(file.read())
+    #     await bot.send_message(chat_id, f'Изображение генерируется по картинке-референсу и по запросу: \n{caption}\n Пожалуйста, подождите!')
 
 
 

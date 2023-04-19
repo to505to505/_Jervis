@@ -46,6 +46,6 @@ def send_image(mesageid_sseed, img_url, prompt, DS_HOST='localhost'):
     data = {
     "prompt": prompt,
     "mesageid_sseed": mesageid_sseed,
-    "img_url": img_url
+    "image_url": img_url
     }
-    requests.put(url, headers = auth, data = data)
+    requests.put(url, headers=auth, json=data)
