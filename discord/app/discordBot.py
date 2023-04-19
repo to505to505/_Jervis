@@ -93,10 +93,10 @@ async def on_message(message):
             file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_drive_url)}"
-            
+
             send_image(messageid_sseed, file_drive_url, parce_get_prompt(file_ds_url))
 
-            logging.info(file_url)
+            logging.info(file_drive_url)
             logging.info(FILE_PATH)
             logging.info(f"File ID: {file_id}")
 
