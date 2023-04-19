@@ -3,6 +3,7 @@ import requests
 import os
 import logging
 import asyncio
+import aiohttp
 from pathlib import Path
 
 import disnake
@@ -14,13 +15,12 @@ from googleapiclient.discovery import build
 
 from JervisRequests import get_image, send_image
 
+
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 
 BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
 #BOT_TOKEN = os.getenv("APP_TOKEN")
-
-AUTH_TOKEN = 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
-#AUTH_TOKEN = os.getenv("AUTH_TOKEN")
 
 HOST = "localhost"
 #HOST = os.getenv("HOST")
@@ -38,14 +38,12 @@ service = build('drive', 'v3', credentials=credentials)
 #config for discord bot
 bot = commands.Bot(command_prefix='.', help_command=None, intents=disnake.Intents.all())
 url = 'https://discord.com/api/v9/interactions'
-auth = {
-  #'authorization': os.getenv("AUTH_TOKEN"),
-  'authorization': AUTH_TOKEN,
-}
+
 
 def parce_get_prompt(url):
     #''.join(url.split('/')[6].split('_')[:-1])
     return url[url.find("_")+1:url.rfind("_")].replace("_", " ")
+
 
 def parce_get_sseed(url):
     return url.split("_")[-1]
@@ -54,6 +52,7 @@ def parce_get_sseed(url):
 @bot.event
 async def on_ready():
     print(f"Bot {bot.user} is ready to work!")
+
 
 @bot.event
 async def on_message(message):
@@ -92,7 +91,7 @@ async def on_message(message):
             file_id = file.get('id')
             file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
-            messageid_sseed = f"{message.id}_{parce_get_sseed(file_drive_url)}"
+            messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
 
             send_image(messageid_sseed, file_drive_url, message.content)
 
@@ -102,8 +101,8 @@ async def on_message(message):
 
             # Удаляем локальную картинку
             # os.remove(FILE_PATH)
-
         else:
             logging.warning("There are no attachment...")
+
 
 bot.run(BOT_TOKEN)

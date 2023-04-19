@@ -1,4 +1,6 @@
 from django.urls import path
+from asgiref.sync import async_to_sync
+from django.views.decorators.csrf import csrf_exempt
 from .views import *
 
 

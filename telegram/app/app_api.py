@@ -34,25 +34,23 @@ from pydantic import BaseModel
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient import http
 from google.oauth2 import service_account
 from google.auth.credentials import Credentials
 
+from bot import bot, dp 
+from utils import *
 
-
-#bot info
-
-#BOT_TOKEN = os.getenv("BOT_TOKEN")
-BOT_TOKEN = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ'
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
 
 #setting telergram call_back data in a convenient way
 callback_data = CallbackData('Method', 'image_number', 'tag')
 
+
 #getting acess to google api
-SERVICE_ACCOUNT_FILE = f'../jervisreshost-65947324df56.json'
+SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
 service = build('drive', 'v3', credentials=credentials)
+
 
 #creating fastapi
 app = FastAPI()
@@ -65,14 +63,6 @@ class ImageRequest(BaseModel):
     prompt: str
     image_url: str
 
-async def make_async_request_post(url: str, data: dict):
-    '''
-    Make async http request
-    '''
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=data) as response:
-            return await response.text()
-
 
 async def download_photo(chat_id, tg_message_id, image_url):
     ''' Function for downloading photo with google url'''
@@ -80,8 +70,8 @@ async def download_photo(chat_id, tg_message_id, image_url):
     file_id = file_link.split("/")[5]
     try:
         request = service.files().get_media(fileId=file_id)
-        with open(f'/temp_storage/{chat_id}__{tg_message_id}__.jpg', 'wb') as f:
-            downloader = googleapiclient.http.MediaIoBaseDownload(f, request)
+        with open(f'temp_storage/{chat_id}__{tg_message_id}__.jpg', 'wb') as f:
+            downloader = http.MediaIoBaseDownload(f, request)
             done = False
             while done is False:
                 status, done = downloader.next_chunk()
@@ -115,27 +105,33 @@ async def make_buttons():
 @app.get('/', tags = ['ROOT'])
 async def root() -> dict:
     ''' Test '''
-
     return {'Ping': 'Pong'}  
 
 
 @app.post('/load_image/')
 async def handle_post(request: ImageRequest):
-    ''' Getting image_url that volodya posted from load_image, downloading it and sending to user. Deleting after.'''
+    '''
+    Getting image_url that volodya posted from load_image, downloading it and sending to user. Deleting after.
+    '''
+    
     data = request.json()
     data = json.loads(data)
+    
     chat_id = data['chat_id']
     tg_message_id = data['tg_message_id']
     image_url = data['image_url']
     prompt = data['prompt']
-    download_photo(chat_id, tg_message_id, image_url)
+    
+    await download_photo(chat_id, tg_message_id, image_url)
     reply_text = "This is your photo!"
-    photo_path = f'/temp_storage/{chat_id}__{tg_message_id}__.jpg'  
+    photo_path = f'temp_storage/{chat_id}__{tg_message_id}__.jpg' 
+     
     with open(photo_path, 'rb') as f:
         photo_bytes = f.read()
-    keyboard = make_buttons()
-    await bot.send_photo(chat_id = chat_id, photo = photo_bytes, caption=reply_text, reply_to_message_id= tg_message_id, reply_markup = keyboard  )
-    await os.remove(photo_path)
+        
+    #keyboard = await make_buttons()
+    await bot.send_photo(chat_id = chat_id, photo = photo_bytes, caption=reply_text, reply_to_message_id= tg_message_id,) #reply_markup = keyboard )
+    os.remove(photo_path)
     
     return {"message": "Data received and processed successfully"}
 

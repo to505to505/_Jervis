@@ -1,4 +1,5 @@
 import aiohttp
+import asyncio
 import requests
 import pickle
 import logging
@@ -15,6 +16,7 @@ from rest_framework import generics
 
 from .models import *
 from .serializers import *
+from .utils import *
 
 # Create your views here.
 
@@ -24,14 +26,6 @@ TG_HOST = "localhost"
 DS_HOST = "localhost"
 #DS_HOST = os.getenv("DISCORD_HOST")
 
-async def make_async_request(url: str, data: dict):
-    '''
-    Make async http request
-    '''
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, json=data) as response:
-            return await response.text()
-
 
 class HelloWorldView(APIView):
     '''
@@ -39,6 +33,7 @@ class HelloWorldView(APIView):
     '''
     def get(self, request):
         return Response({"message": "Hello, world!"})
+    
     
 class CreateTgChat(APIView):
     '''
@@ -56,6 +51,7 @@ class CreateTgChat(APIView):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+        
 class SendPrompt(APIView):
     '''
     Send and generate prompt
@@ -63,10 +59,8 @@ class SendPrompt(APIView):
     def post(self, request, format=None):
         chat_id = request.data.get("chat_id")
         prompt = request.data.get("prompt")
-        tg_message_id = request.data.get("tg_message_id")
-        
-        chat = Chat.objects.get(chat_id=chat_id)
-        
+        tg_message_id = request.data.get("tg_message_id")      
+        chat = Chat.objects.get(chat_id=chat_id)      
         if chat.generation_amount == 0:
             return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
 
@@ -75,12 +69,12 @@ class SendPrompt(APIView):
             serializer.save(chat=chat, tg_message_id=tg_message_id)
             data = {"prompt":prompt,}
             
-            # await make_async_request(f"http://{DS_HOST}:80/generate_image/", data=data)
-            requests.post(f"http://{DS_HOST}:80/generate_image/", json=data)
+            # await make_async_request_post(f"http://{DS_HOST}:80/generate_image/", data=data)
+            response = requests.post(f"http://{DS_HOST}:80/generate_image/", json=data)
             
-            return Response("Image has sent and sabed in database!")
+            return Response(data=response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+ 
     
 class PushButton(APIView):
     '''
@@ -113,13 +107,13 @@ class PushButton(APIView):
                     "image_number":image_number,
                     "messageid_sseed":messageid_sseed}
             
-            # await make_async_request(f"http://{DS_HOST}:80/push_button/", data=data)
-            requests.post(f"http://{DS_HOST}:80/push_button/", json=data)
+            # await make_async_request_post(f"http://{DS_HOST}:80/push_button/", data=data)
+            response = requests.post(f"http://{DS_HOST}:80/push_button/", json=data)
             
             serializer.save(chat=chat)
-            return Response("Image has sent and sabed in database!", status=status.HTTP_200_OK)
+            return Response(data=response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+ 
 
 class SaveImage(APIView):
     '''
@@ -150,12 +144,12 @@ class SaveImage(APIView):
                            "chat_id": chat_id,
                            "prompt": prompt}
             
-            # await make_async_request(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
-            requests.post(f"http://{DS_HOST}:80/push_button/", json=data_for_tg)
+            # await make_async_request_post(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
+            response = requests.post(f"http://{DS_HOST}:81/load_image/", json=data_for_tg)
             
             image.prompt += ":jervis_token_notcopy_ifsomeonegetitoutappwillcpllapse_43"
             serializer.save()
-            return Response(serializer.data)
+            return Response(data=response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         

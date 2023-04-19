@@ -10,6 +10,7 @@ class Chat(models.Model):
 class Client(models.Model):
     chat = models.ForeignKey(Chat, null=True, on_delete=models.SET_NULL)
     
+    
 class Image(models.Model):
     client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL)
     chat = models.ForeignKey(Chat, null=True, on_delete=models.SET_NULL)
