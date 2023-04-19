@@ -50,7 +50,7 @@ dp = Dispatcher(bot)
 callback_data = CallbackData('Method', 'image_number', 'tag')
 
 #getting acess to google api
-SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
+SERVICE_ACCOUNT_FILE = f'../jervisreshost-65947324df56.json'
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
 service = build('drive', 'v3', credentials=credentials)
 
