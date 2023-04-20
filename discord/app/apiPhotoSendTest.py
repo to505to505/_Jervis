@@ -45,7 +45,7 @@ async def generate_image(request: ImageGenerationRequest):
     data = request.json()
     data = json.loads(data)
     input_text = data.get("prompt")
-    logging.info(data, input_text)
+    #logging.info(data, input_text)
     
     file = open(IMG_PATH, 'rb')
     files = {

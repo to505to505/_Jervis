@@ -1,8 +1,14 @@
 from django.db import models
 
 class Chat(models.Model):
+    STATUS_CHOICES = [
+        ("paid", "paid"),
+        ("free", "free"),
+    ]
+    
     chat_id = models.IntegerField(unique=True, null=True)
     generation_amount = models.IntegerField(default=15)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default="free")
 
     def __str__(self) -> str:
         return f"tg_id: {self.chat_id}"

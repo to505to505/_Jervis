@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from celery.schedules import crontab
+from celery import shared_task, current_task, Task
+from celery.utils.log import get_task_logger
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'crontab',
     'telegram',
+    'flower',
 ]
 
 MIDDLEWARE = [
@@ -80,30 +83,30 @@ WSGI_APPLICATION = 'jervis.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': os.getenv("DB"),
-        # 'USER': os.getenv("USER"),
-        # 'PASSWORD': os.getenv("PASSWORD"),
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': os.getenv("DB"),
+         'USER': os.getenv("USER"),
+         'PASSWORD': os.getenv("PASSWORD"),
          'HOST': os.getenv("HOST"),
-        # 'PORT': '5432',
+         'PORT': '5432',
         
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
+        #'ENGINE': 'django.db.backends.postgresql',
+        #'NAME': 'postgres',
+        #'USER': 'postgres',
+        #'PASSWORD': 'password',
         #'HOST': 'localhost',
-        'PORT': '5432',
+        #'PORT': '5432',
     }
 }
 
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = f'redis://{os.getenv("REDIS_HOST")}:6379'
+CELERY_RESULT_BACKEND = f'redis://{os.getenv("REDIS_HOST")}:6379'
 CELERY_TIMEZONE = 'Europe/Moscow'
-CELERY_BEAT_SCHEDULE = {
-    'update_database': {
-        'task': 'telegram.tasks.update_database',
-        'schedule': crontab(hour=0, minute=1),
-    },
-}
+
+CELERY_FLOWER_USER = 'flower'
+CELERY_FLOWER_PASSWORD = 'secret'
+CELERY_FLOWER_PORT = 5555
+CELERY_FLOWER_URL_PREFIX = 'flower'
 
 
 # Password validation

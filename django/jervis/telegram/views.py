@@ -19,6 +19,7 @@ from rest_framework import generics
 from .models import *
 from .serializers import *
 from .utils import *
+from .tasks import *
 
 # Create your views here.
 ALPHABET = string.ascii_letters + string.digits
@@ -70,12 +71,16 @@ class SendPrompt(APIView):
         serializer = ImageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(chat=chat, tg_message_id=tg_message_id)
-            data = {"prompt":prompt,}
             
             #response = await make_async_request_post(f"http://{DS_SOCKET}/generate_image/", data=data)
-            response = requests.post(f"http://{DS_SOCKET}/generate_image/", json=data)
+            #response = requests.post(f"http://{DS_SOCKET}/generate_image/", json=data)
             
-            return Response(data=response, status=status.HTTP_200_OK)
+            if chat.status == "paid":
+                generate_paid_image(prompt, DS_SOCKET)
+            elif chat.status == "free":
+                generate_free_image(prompt, DS_SOCKET)
+            
+            return Response(data={"message": "Image generation task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
     
@@ -106,15 +111,16 @@ class PushButton(APIView):
         
         serializer = ImageSerializer(data=new_data)
         if serializer.is_valid():
-            data = {"method":method,
-                    "image_number":image_number,
-                    "messageid_sseed":messageid_sseed}
-            
             # await make_async_request_post(f"http://{DS_HOST}:80/push_button/", data=data)
-            response = requests.post(f"http://{DS_SOCKET}/push_button/", json=data)
-            
+            # response = requests.post(f"http://{DS_SOCKET}/push_button/", json=data)
             serializer.save(chat=chat)
-            return Response(data=response, status=status.HTTP_200_OK)
+            
+            if chat.status == "paid":
+                push_paid_button(method, image_number, messageid_sseed, DS_SOCKET)
+            elif chat.status == "free":
+                push_free_button(method, image_number, messageid_sseed, DS_SOCKET)
+                
+            return Response(data={"message": "Image push button task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 
@@ -129,7 +135,8 @@ class SaveImage(APIView):
         image_url = request.data.get("image_url")
         mesageid_sseed = request.data.get("mesageid_sseed")
         
-        image = Image.objects.get(prompt = prompt)
+        #image = Image.objects.get(prompt = prompt)
+        image = Image.objects.filter(prompt=prompt).latest('id')
         
         tg_message_id = image.tg_message_id
         chat = image.chat
@@ -142,14 +149,14 @@ class SaveImage(APIView):
             chat_serializer.save()
         else:
             return Response(chat_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        data_for_tg = {"image_url": image_url,
-                           "tg_message_id": tg_message_id,
-                           "chat_id": chat_id,
-                           "prompt": prompt}
-            
+ 
         # await make_async_request_post(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
-        response = requests.post(f"http://{TG_SOCKET}/load_image/", json=data_for_tg)
+        # response = requests.post(f"http://{TG_SOCKET}/load_image/", json=data_for_tg)
+        
+        if chat.status == "paid":
+            response = send_data_to_telegram_paid(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
+        elif chat.status == "free":
+            response = send_data_to_telegram_free(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
         
         new_data = QueryDict('', mutable=True)
         new_data.update(request.data)

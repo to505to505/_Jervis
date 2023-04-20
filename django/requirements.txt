@@ -14,6 +14,8 @@ psycopg2
 requests
 aiohttp
 celery
+redis
 django-celery-beat
 django-crontab
 channels
+flower

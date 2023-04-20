@@ -25,8 +25,8 @@ dp.register_message_handler(send_start, commands=['start'])
 dp.register_message_handler(handle_generate, Text(equals='Сгенерировать изображение'))
 dp.callback_query_handler(button_gen_handler)
 dp.register_message_handler(handle_help, Text(equals='Техническая поддержка'))
-dp.register_message_handler(handle_prompt, content_types=types.ContentTypes.TEXT, state=MyConversation.generation)
-dp.message_handler(handle_photo, content_types=types.ContentTypes.PHOTO, state = MyConversation.generation)
+dp.register_message_handler(handle_prompt, content_types=types.ContentTypes.TEXT)#, state=MyConversation.generation)
+dp.message_handler(handle_photo, content_types=types.ContentTypes.PHOTO)#, state = MyConversation.generation)
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=False)
