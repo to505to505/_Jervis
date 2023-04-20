@@ -129,8 +129,6 @@ class SaveImage(APIView):
         image_url = request.data.get("image_url")
         mesageid_sseed = request.data.get("mesageid_sseed")
         
-        print(prompt, image_url, mesageid_sseed)
-        
         image = Image.objects.get(prompt = prompt)
         
         tg_message_id = image.tg_message_id

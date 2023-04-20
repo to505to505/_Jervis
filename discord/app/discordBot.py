@@ -93,14 +93,14 @@ async def on_message(message):
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
 
-            await send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
+            send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
 
             logging.info(file_drive_url)
             logging.info(FILE_PATH)
             logging.info(f"File ID: {file_id}")
 
             # Удаляем локальную картинку
-            os.remove(FILE_PATH)
+            # os.remove(FILE_PATH)
 
         else:
             logging.warning("There are no attachment...")

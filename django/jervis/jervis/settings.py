@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+mz_-&+!+*i68b-l%%zy6^-p8swo2)o0xb)fxqk@+s)x&w%s1m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['jervisdjango', 'localhost']
+ALLOWED_HOSTS = ['jervisdjango', 'localhost', 'jervis_tg', 'jervis_discord']
 
 
 # Application definition
@@ -78,19 +78,19 @@ WSGI_APPLICATION = 'jervis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB"),
-        'USER': os.getenv("USER"),
-        'PASSWORD': os.getenv("PASSWORD"),
-        'HOST': os.getenv("HOST"),
-        'PORT': '5432',
-        
         # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'postgres',
-        # 'USER': 'postgres',
-        # 'PASSWORD': 'password',
-        # 'HOST': 'localhost',
+        # 'NAME': os.getenv("DB"),
+        # 'USER': os.getenv("USER"),
+        # 'PASSWORD': os.getenv("PASSWORD"),
+         'HOST': os.getenv("HOST"),
         # 'PORT': '5432',
+        
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        #'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

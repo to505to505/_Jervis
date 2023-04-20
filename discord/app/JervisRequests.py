@@ -10,7 +10,7 @@ async def make_async_request_post(url: str, headers:dict, data: dict):
         async with session.post(url, headers=headers, json=data) as response:
             return await response.text()
 
-async def get_image(prompt):
+def get_image(prompt):
     url = 'https://discord.com/api/v9/interactions'
     auth = {
       'authorization': os.getenv("AUTH_TOKEN")
@@ -44,9 +44,11 @@ async def get_image(prompt):
     # "name":"description",
     # "value":prompt}],
     # }}
-    await make_async_request_post(url, headers = auth, data = msg)
+    
+    #await make_async_request_post(url, headers = auth, data = msg)
+    requests.post(url, headers=auth, json=msg)
 
-async def send_image(mesageid_sseed, img_url, prompt, DS_HOST='localhost'):
+def send_image(mesageid_sseed, img_url, prompt, DS_HOST='localhost'):
     url = f'http://{DS_HOST}:8000/api/ds/load_image/'
     auth = {
         'authorization': os.getenv("AUTH_TOKEN")
@@ -57,4 +59,5 @@ async def send_image(mesageid_sseed, img_url, prompt, DS_HOST='localhost'):
     "mesageid_sseed": mesageid_sseed,
     "image_url": img_url
     }
-    await make_async_request_post(url, headers=auth, data=data)
+    #await make_async_request_post(url, headers=auth, data=data)
+    requests.put(url, headers=auth, json=data)

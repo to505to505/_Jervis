@@ -30,7 +30,7 @@ services:
       PASSWORD: password
       USER: postgres
       DB: postgres
-      #DEBUG: True
+      DEBUG: True
       DISCORD_HOST: jervis_discord
       TG_HOST: jervis_tg
     networks:
