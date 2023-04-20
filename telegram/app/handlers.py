@@ -55,7 +55,8 @@ class MyConversation(StatesGroup):
 ### Handler of /start
 async def send_start(message: types.Message, state: FSMContext):
     ''' Starting bot, sending user main menu buttons and sending his chat_id to django'''
-    await state.set_state(MyConversation.non_generation)
+    logging.info(f'Received start command from {message.from_user.id}')
+    await MyConversation.non_generation.set()
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = KeyboardButton("Сгенерировать изображение")
     button2 = KeyboardButton("Мой профиль")
@@ -71,7 +72,9 @@ async def send_start(message: types.Message, state: FSMContext):
     
 async def handle_generate(message: types.Message, state: FSMContext):
     '''' Starting generation by clicking on the button Сгенерировать изображение. Function gets prompt and sends prompts to Django'''
-    await state.set_state(MyConversation.generation)
+    logging.info(f'Received generation command from {message.from_user.id}')
+    await MyConversation.generation.set()
+    logging.info(f'Received generation command2 from {message.from_user.id}')
     chat_id = message.chat.id
     await bot.send_message(chat_id, 'Напишите prompt и по желанию прикрепите картинку-референс.')
 
@@ -83,7 +86,8 @@ async def handle_prompt(message: types.Message, state: FSMContext):
         tg_message_id = message.message_id
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
         await send_prompt(chat_id, prompt, tg_message_id)
-        await state.set_state(MyConversation.non_generation)
+        await MyConversation.non_generation.set()
+
         
     
 async def handle_photo(message: types.Message, state: FSMContext):

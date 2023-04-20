@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher
 import os
 import logging
 
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import aioredis
 import redis 
@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 #test 
 BOT_TOKEN = '6284620288:AAHYt9Xru76sPk20_rgnRvmk7poIzgth3Gk'
 
-storage = RedisStorage2('jervis_redis', 6379, db=0)
+storage = MemoryStorage()
 
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)#, storage=storage)
+dp = Dispatcher(bot, storage=storage)
