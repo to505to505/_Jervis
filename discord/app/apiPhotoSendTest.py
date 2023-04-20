@@ -29,8 +29,8 @@ logging.info(IMG_PATH)
 
 url = 'https://discord.com/api/v9/channels/1095343240594595900/messages'
 auth = {
-  #'authorization': os.getenv("AUTH_TOKEN")
-  'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
+  'authorization': os.getenv("AUTH_TOKEN")
+  #'authorization': 'MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI'
 }
 
 

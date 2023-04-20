@@ -78,19 +78,19 @@ WSGI_APPLICATION = 'jervis.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': os.getenv("DB"),
-        # 'USER': os.getenv("USER"),
-        # 'PASSWORD': os.getenv("PASSWORD"),
-        # 'HOST': os.getenv("HOST"),
-        # 'PORT': '5432',
-        
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'NAME': os.getenv("DB"),
+        'USER': os.getenv("USER"),
+        'PASSWORD': os.getenv("PASSWORD"),
+        'HOST': os.getenv("HOST"),
         'PORT': '5432',
+        
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'postgres',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'password',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
     }
 }
 

@@ -42,10 +42,6 @@ from bot import bot, dp
 from utils import *
 
 
-#setting telergram call_back data in a convenient way
-callback_data = CallbackData('Method', 'image_number', 'tag')
-
-
 #getting acess to google api
 SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
@@ -85,15 +81,15 @@ async def download_photo(chat_id, tg_message_id, image_url):
 
 async def make_buttons():
     ''''Creating buttons as U1, U2, etc,'''
-    button1 = InlineKeyboardButton(text="U1", callback_data=callback_data.new(Method='U', image_number = '1', tag = 'regen'))
-    button2 = InlineKeyboardButton(text="U2", callback_data=callback_data.new(Method='U', image_number = '2', tag = 'regen'))
-    button3 = InlineKeyboardButton(text="U3", callback_data=callback_data.new(Method='U', image_number = '3', tag = 'regen'))
-    button4 = InlineKeyboardButton(text="U4", callback_data=callback_data.new(Method='U', image_number = '4', tag = 'regen'))
-    button5 = InlineKeyboardButton(text="V1", callback_data=callback_data.new(Method='V', image_number = '1', tag = 'regen'))
-    button6 = InlineKeyboardButton(text="V2", callback_data=callback_data.new(Method='V', image_number = '2', tag = 'regen'))
-    button7 = InlineKeyboardButton(text="V3", callback_data=callback_data.new(Method='V', image_number = '3', tag = 'regen'))
-    button8 = InlineKeyboardButton(text="V4", callback_data=callback_data.new(Method='V', image_number = '4', tag = 'regen'))
-    button9 = InlineKeyboardButton(text="Reroll", callback_data=callback_data.new(Method='Reroll', image_number = '0', tag = 'regen'))
+    button1 = InlineKeyboardButton(text="U1", callback_data="Upscaled:1")
+    button2 = InlineKeyboardButton(text="U2", callback_data="Upscaled:2")
+    button3 = InlineKeyboardButton(text="U3", callback_data="Upscaled:3")
+    button4 = InlineKeyboardButton(text="U4", callback_data="Upscaled:4")
+    button5 = InlineKeyboardButton(text="V1", callback_data="Variations:1")
+    button6 = InlineKeyboardButton(text="V2", callback_data="Variations:2")
+    button7 = InlineKeyboardButton(text="V3", callback_data="Variations:3")
+    button8 = InlineKeyboardButton(text="V4", callback_data="Variations:4")
+    button9 = InlineKeyboardButton(text="Reroll", callback_data="Reroll:0")
 
     keyboard = InlineKeyboardMarkup()
     keyboard.row(button1, button2, button3, button4, button9)
@@ -129,8 +125,8 @@ async def handle_post(request: ImageRequest):
     with open(photo_path, 'rb') as f:
         photo_bytes = f.read()
         
-    #keyboard = await make_buttons()
-    await bot.send_photo(chat_id = chat_id, photo = photo_bytes, caption=reply_text, reply_to_message_id= tg_message_id,) #reply_markup = keyboard )
+    keyboard = await make_buttons()
+    await bot.send_photo(chat_id = chat_id, photo = photo_bytes, caption=reply_text, reply_to_message_id= tg_message_id, reply_markup = keyboard)
     os.remove(photo_path)
     
     return {"message": "Data received and processed successfully"}

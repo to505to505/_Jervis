@@ -19,11 +19,11 @@ from JervisRequests import get_image, send_image
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 
-BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
-#BOT_TOKEN = os.getenv("APP_TOKEN")
+#BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
+BOT_TOKEN = os.getenv("APP_TOKEN")
 
-HOST = "localhost"
-#HOST = os.getenv("HOST")
+#HOST = "localhost"
+HOST = os.getenv("DJANGO_HOST")
 
 #pathes
 PICTURE_PATH = ''
@@ -93,7 +93,7 @@ async def on_message(message):
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
 
-            await send_image(messageid_sseed, file_drive_url, message.content)
+            await send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
 
             logging.info(file_drive_url)
             logging.info(FILE_PATH)

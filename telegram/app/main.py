@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 
 dp.register_message_handler(send_start, commands=['start'])
 dp.register_message_handler(handle_generate, Text(equals='Сгенерировать изображение'))
-dp.callback_query_handler(button_gen_handler, filters=lambda c: c.data['tag'] == 'regen')
+dp.callback_query_handler(button_gen_handler)
 dp.register_message_handler(handle_help, Text(equals='Техническая поддержка'))
 dp.register_message_handler(handle_prompt, content_types=types.ContentTypes.TEXT)
 #@dp.message_handler(content_types=types.ContentTypes.PHOTO)

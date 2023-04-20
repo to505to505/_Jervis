@@ -8,4 +8,4 @@ WORKDIR /app/
 
 COPY ./app ./
 
-CMD bash -c "python main.py & python ./tg_api/main_api.py"
+CMD bash -c "python main.py & uvicorn app_api:app --host 0.0.0.0 --port 81 --reload"

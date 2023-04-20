@@ -5,6 +5,8 @@ import pickle
 import logging
 import os
 import json
+import secrets
+import string
 
 from django.shortcuts import render
 from django.http import QueryDict
@@ -19,12 +21,13 @@ from .serializers import *
 from .utils import *
 
 # Create your views here.
+ALPHABET = string.ascii_letters + string.digits
 
-TG_HOST = "localhost"
-#TG_HOST = os.getenv("TG_HOST")
+#TG_HOST = "localhost"
+TG_SOCKET = f"{os.getenv('TG_HOST')}:81" 
 
-DS_HOST = "localhost"
-#DS_HOST = os.getenv("DISCORD_HOST")
+#DS_HOST = "localhost"
+DS_SOCKET = f"{os.getenv('DISCORD_HOST')}:80"
 
 
 class HelloWorldView(APIView):
@@ -69,8 +72,8 @@ class SendPrompt(APIView):
             serializer.save(chat=chat, tg_message_id=tg_message_id)
             data = {"prompt":prompt,}
             
-            # await make_async_request_post(f"http://{DS_HOST}:80/generate_image/", data=data)
-            response = requests.post(f"http://{DS_HOST}:80/generate_image/", json=data)
+            #response = make_async_request_post(f"http://{DS_HOST}:80/generate_image/", data=data)
+            response = requests.post(f"http://{DS_SOCKET}/generate_image/", json=data)
             
             return Response(data=response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -108,7 +111,7 @@ class PushButton(APIView):
                     "messageid_sseed":messageid_sseed}
             
             # await make_async_request_post(f"http://{DS_HOST}:80/push_button/", data=data)
-            response = requests.post(f"http://{DS_HOST}:80/push_button/", json=data)
+            response = requests.post(f"http://{DS_SOCKET}/push_button/", json=data)
             
             serializer.save(chat=chat)
             return Response(data=response, status=status.HTTP_200_OK)
@@ -120,6 +123,8 @@ class SaveImage(APIView):
     Load and save generated image url from discord
     '''
     def put(self, request, format=None):
+        random_string = ''.join(secrets.choice(ALPHABET) for i in range(50))
+        
         prompt = request.data.get("prompt") 
         image_url = request.data.get("image_url")
         mesageid_sseed = request.data.get("mesageid_sseed")
@@ -132,22 +137,29 @@ class SaveImage(APIView):
         chat = image.chat
         chat_id = chat.chat_id
         
-        new_data = QueryDict('', mutable=True)
-        new_data.update(request.data)
-        new_data["is_ended"] = True
+        chat_data = QueryDict('', mutable=True)
+        chat_data["generation_amount"] = chat.generation_amount - 1
+        chat_serializer = ChatSerializer(chat, chat_data)
+        if chat_serializer.is_valid():
+            chat_serializer.save()
+        else:
+            return Response(chat_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        serializer = ImageSerializer(image, new_data)
-        if serializer.is_valid():
-            chat.generation_amount -= 1
-            data_for_tg = {"image_url": image_url,
+        data_for_tg = {"image_url": image_url,
                            "tg_message_id": tg_message_id,
                            "chat_id": chat_id,
                            "prompt": prompt}
             
-            # await make_async_request_post(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
-            response = requests.post(f"http://{DS_HOST}:81/load_image/", json=data_for_tg)
-            
-            image.prompt += ":jervis_token_notcopy_ifsomeonegetitoutappwillcpllapse_43"
+        # await make_async_request_post(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
+        response = requests.post(f"http://{TG_SOCKET}/load_image/", json=data_for_tg)
+        
+        new_data = QueryDict('', mutable=True)
+        new_data.update(request.data)
+        new_data["is_ended"] = True
+        new_data["prompt"] = prompt + random_string
+        
+        serializer = ImageSerializer(image, new_data)
+        if serializer.is_valid():
             serializer.save()
             return Response(data=response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

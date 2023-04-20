@@ -30,6 +30,7 @@ services:
       PASSWORD: password
       USER: postgres
       DB: postgres
+      #DEBUG: True
       DISCORD_HOST: jervis_discord
       TG_HOST: jervis_tg
     networks:
@@ -42,18 +43,19 @@ services:
        interval: 5s 
        timeout: 5s
        retries: 5
-       test: ["CMD", "curl", "-f", "http://localhost:8000/test"]
+       test: ["CMD", "curl", "-f", "http://localhost:8000"]
     depends_on:
       db:
         condition: service_healthy
     volumes:
        - jervis_backend_vol:/var/lib/app
+    build: ./django
 
   discord:
     image: jervis_discord:1
     container_name: jervis_discord
     environment:
-      HOST: jervisdjango
+      DJANGO_HOST: jervisdjango
       APP_TOKEN: MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4
       AUTH_TOKEN: MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI
     networks:
@@ -61,22 +63,26 @@ services:
     restart: always
     ports:
         - '80:80'
+    build: ./discord
 
   tg:
     image: jervis_tg:1
     container_name: jervis_tg
     environment:
-      HOST: jervisdjango
+      DJANGO_HOST: jervisdjango
       BOT_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
     networks:
       - jervis_net
     restart: always
     ports:
         - '81:81'
+    build: ./telegram
 
 volumes:
  jervis_postgres_vol:
    name: jervis_postgres_vol
+ jervis_redis_vol:
+   name: jervis_redis_vol
  jervis_backend_vol:
    name: jervis_backend_vol
 

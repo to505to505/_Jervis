@@ -17,7 +17,7 @@ class Image(models.Model):
     image_url = models.URLField(null=True)
     tg_message_id = models.IntegerField(null=True)
     mesageid_sseed = models.CharField(max_length=200, unique=True, null=True)
-    prompt = models.TextField(null=True)
+    prompt = models.TextField(null=True, db_index=True)
     creation_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
     is_ended = models.BooleanField(default=False)

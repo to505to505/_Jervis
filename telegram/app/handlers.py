@@ -129,8 +129,9 @@ async def handle_help(message: types.Message):
 
 #Handlers of buttons like U1, U2 etc, 
 async def button_gen_handler(callback_query: CallbackQuery, state: FSMContext):
-    method = callback_query.data.get('method')
-    image_number = callback_query.data.get('image_number')
+    method, image_number = callback_query.data.split(":")
+    image_number = int(image_number)
+    
     tg_message_id = callback_query.message.message_id
     chat_id = callback_query.message.chat.id
 
