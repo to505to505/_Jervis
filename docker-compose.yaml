@@ -29,6 +29,8 @@ services:
       - "6379:6379"
     volumes:
       - jervis_redis_vol:/data
+    networks:
+      - jervis_net
 
   django:
     image: jervis_django:1

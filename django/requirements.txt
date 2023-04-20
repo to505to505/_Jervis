@@ -15,4 +15,5 @@ requests
 aiohttp
 celery
 django-celery-beat
+django-crontab
 channels
