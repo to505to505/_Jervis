@@ -35,7 +35,8 @@ from googleapiclient.http import MediaFileUpload
 from back_functions import *
 from bot import bot, dp
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
+
 
 #google set up
 SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
@@ -47,13 +48,14 @@ callback_data = CallbackData('method', 'image_number', 'tag')
 
 class MyConversation(StatesGroup):
     '''' Defining class to track states of users'''
-    state1 = State()
-    state2 = State()
+    generation = State()
+    non_generation = State()
 
 
 ### Handler of /start
-async def send_start(message: types.Message):
+async def send_start(message: types.Message, state: FSMContext):
     ''' Starting bot, sending user main menu buttons and sending his chat_id to django'''
+    await state.set_state(MyConversation.non_generation)
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = KeyboardButton("Сгенерировать изображение")
     button2 = KeyboardButton("Мой профиль")
@@ -67,22 +69,24 @@ async def send_start(message: types.Message):
 
 ### Handlers of Main Menu buttons
     
-async def handle_generate(message: types.Message):
+async def handle_generate(message: types.Message, state: FSMContext):
     '''' Starting generation by clicking on the button Сгенерировать изображение. Function gets prompt and sends prompts to Django'''
+    await state.set_state(MyConversation.generation)
     chat_id = message.chat.id
     await bot.send_message(chat_id, 'Напишите prompt и по желанию прикрепите картинку-референс.')
 
 
-async def handle_prompt(message: types.Message):
+async def handle_prompt(message: types.Message, state: FSMContext):
         ''''Handling prompt without a reference-photo'''
         chat_id = message.chat.id
         prompt = message.text
         tg_message_id = message.message_id
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
         await send_prompt(chat_id, prompt, tg_message_id)
+        await state.set_state(MyConversation.non_generation)
         
     
-async def handle_photo(message: types.Message):
+async def handle_photo(message: types.Message, state: FSMContext):
     '''' Handling prompt with photo'''
     chat_id = message.chat.id
     tg_message_id = message.message_id
@@ -114,24 +118,26 @@ async def handle_photo(message: types.Message):
         prompt += f" {caption}"
 
         await send_prompt(chat_id, prompt, tg_message_id)
+        await state.set_state(MyConversation.non_generation)
     else:
         await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
+        await state.set_state(MyConversation.non_generation)
 
 
-async def handle_help(message: types.Message):
+async def handle_help(message: types.Message, state: FSMContext):
     ''' Handling Техническая Поддержка button'''
+    await state.set_state(MyConversation.non_generation)
     chat_id = message.chat.id
     button1 = InlineKeyboardButton('Техническая поддержка', url = 'https://t.me/Kwazzart')
     button2 = InlineKeyboardButton('Сотрудничество и прочие вопросы', url = 'https://t.me/to505to505')
     keyboard = InlineKeyboardMarkup().row(button1, button2)
-    await bot.send_message(chat_id, f'При обращении в поддержк, пожалуйста, сообщите свой id: {chat_id}', reply_markup=keyboard)
+    await bot.send_message(chat_id, f'При обращении в поддержку, пожалуйста, сообщите свой id: {chat_id}', reply_markup=keyboard)
 
 
 #Handlers of buttons like U1, U2 etc, 
 async def button_gen_handler(callback_query: CallbackQuery, state: FSMContext):
-    method, image_number = callback_query.data.split(":")
-    image_number = int(image_number)
-    
+    method = callback_query.data.get('method')
+    image_number = callback_query.data.get('image_numb  er')
     tg_message_id = callback_query.message.message_id
     chat_id = callback_query.message.chat.id
 
