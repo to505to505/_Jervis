@@ -15,10 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from crontab import urls as crontab_urls
+#from crontab import urls as crontab_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('telegram.urls')),
-    path('crontab/', include(crontab_urls)),
 ]
