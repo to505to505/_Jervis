@@ -62,9 +62,9 @@ async def on_message(message):
         logging.info("content: " + str(message.content))
         logging.info("embeds: " + str(message.embeds))
 
-        logging.info(message.attachments)
+        #logging.info(message.attachments)
         await asyncio.sleep(1)
-        logging.info(message.attachments)
+        #logging.info(message.attachments)
 
         if message.attachments:
             # Getting file name from discord
@@ -85,15 +85,23 @@ async def on_message(message):
             drive_service = build('drive', 'v3', credentials=creds)
             file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
             media = MediaFileUpload(FILE_PATH, resumable=True)
-            file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            
+            # file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            
+            file = await asyncio.to_thread(
+            drive_service.files().create,
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+            )
 
             # Getting link on google drive
-            file_id = file.get('id')
+            file_id = file.execute().get('id')
             file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
-
-            send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
+            
+            await send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
 
             logging.info(file_drive_url)
             logging.info(FILE_PATH)

@@ -62,8 +62,8 @@ class SendPrompt(APIView):
     def post(self, request, format=None):
         chat_id = request.data.get("chat_id")
         prompt = request.data.get("prompt")
-        tg_message_id = request.data.get("tg_message_id")      
-        chat = Chat.objects.get(chat_id=chat_id)      
+        tg_message_id = request.data.get("tg_message_id")
+        chat = Chat.objects.get(chat_id=chat_id)
         if chat.generation_amount == 0:
             return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
 
@@ -72,7 +72,7 @@ class SendPrompt(APIView):
             serializer.save(chat=chat, tg_message_id=tg_message_id)
             data = {"prompt":prompt,}
             
-            #response = make_async_request_post(f"http://{DS_HOST}:80/generate_image/", data=data)
+            #response = await make_async_request_post(f"http://{DS_SOCKET}/generate_image/", data=data)
             response = requests.post(f"http://{DS_SOCKET}/generate_image/", json=data)
             
             return Response(data=response, status=status.HTTP_200_OK)

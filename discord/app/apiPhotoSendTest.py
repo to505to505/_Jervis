@@ -12,6 +12,8 @@ import disnake
 from disnake.ext import commands
 from pydantic import BaseModel
 
+from JervisRequests import *
+
 class ImageGenerationRequest(BaseModel):
     prompt: str
     
@@ -53,7 +55,7 @@ async def generate_image(request: ImageGenerationRequest):
 
     msg = {"content":f"{input_text}"}
 
-    requests.post(url, headers = auth, data = msg, files=files)
+    requests.post(url, headers=auth, data=msg, files=files)
     print(f"sent a /generate command with prompt: {input_text}")
     file.close()
     
