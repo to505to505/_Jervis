@@ -7,7 +7,7 @@ async def make_async_request_put(url: str, headers:dict, data: dict):
     '''
     Make async http request
     '''
-    logging.info(url, headers, data)
+    #logging.info(url, headers, data)
     async with aiohttp.ClientSession() as session:
         async with session.put(url, headers=headers, json=data) as response:
             return await response.text()

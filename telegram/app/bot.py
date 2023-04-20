@@ -3,6 +3,7 @@ import os
 import logging
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
 import aioredis
 import redis 
@@ -16,6 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 #test 
 BOT_TOKEN = '6284620288:AAHYt9Xru76sPk20_rgnRvmk7poIzgth3Gk'
 
+#storage = RedisStorage2(host=os.getenv("REDIS_HOST"), port=6379, db=0)
 storage = MemoryStorage()
 
 bot = Bot(token=BOT_TOKEN)

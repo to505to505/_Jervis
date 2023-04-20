@@ -25,10 +25,12 @@ services:
   redis:
     image: redis
     container_name: jervis_redis
+    restart: always
     ports:
       - "6379:6379"
     volumes:
       - jervis_redis_vol:/data
+    command: redis-server --appendonly yes
     networks:
       - jervis_net
 
@@ -43,6 +45,7 @@ services:
       DEBUG: True
       DISCORD_HOST: jervis_discord
       TG_HOST: jervis_tg
+      REDIS_HOST: jervis_redis
     networks:
       - jervis_net
     restart: always
@@ -80,6 +83,7 @@ services:
     container_name: jervis_tg
     environment:
       DJANGO_HOST: jervisdjango
+      REDIS_HOST: jervis_redis
       BOT_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
     networks:
       - jervis_net
