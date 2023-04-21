@@ -140,16 +140,19 @@ async def handle_help(message: types.Message, state: FSMContext):
 
 #Handlers of buttons like U1, U2 etc, 
 async def button_gen_handler(callback_query: CallbackQuery, state: FSMContext):
+    logging.info(f'Buttons started')
     callback_text = callback_query.data
     method, image_number = callback_text.split(':')
     print(method, image_number)
     tg_message_id = callback_query.message.message_id
     chat_id = callback_query.message.chat.id
-    message = await bot.get_message(chat_id=chat_id, message_id=tg_message_id)
-    original_message_id = message.reply_to_message.message_id
-    response = await push_button(chat_id, original_message_id, tg_message_id, method, image_number)
-    return response
+    #if tg_message_id.reply_to_message:
+        # Get the message that the current message is replying to
+        #original_message_id= tg_message_id.reply_to_message.message_id
 
+    response = await push_button(chat_id, tg_message_id, method, image_number),# original_message_id)
+    return response
+    
 
 
 
