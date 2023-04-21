@@ -32,9 +32,8 @@ MAIN_FOLDER_PATH = Path(__file__).resolve(strict=True).parent
 #config for service account of google drive_service
 SCOPES = ['https://www.googleapis.com/auth/drive']
 SERVICE_ACCOUNT_FILE = MAIN_FOLDER_PATH.joinpath('jervisreshost-d276f897f4c0.json')
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-service = build('drive', 'v3', credentials=credentials)
-
+creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+drive_service = build('drive', 'v3', credentials=creds)
 #config for discord bot
 bot = commands.Bot(command_prefix='.', help_command=None, intents=disnake.Intents.all())
 url = 'https://discord.com/api/v9/interactions'
@@ -80,14 +79,11 @@ async def on_message(message):
             logging.info('saved')
 
             # Connecting to google drive and load image
-            creds = service_account.Credentials.from_service_account_file(
-                SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-            drive_service = build('drive', 'v3', credentials=creds)
             file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
             media = MediaFileUpload(FILE_PATH, resumable=True)
-            
+
             # file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
-            
+
             file = await asyncio.to_thread(
             drive_service.files().create,
             body=file_metadata,
@@ -100,7 +96,7 @@ async def on_message(message):
             file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
-            
+
             await send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
 
             #logging.info(file_drive_url)
