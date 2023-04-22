@@ -9,9 +9,11 @@ import secrets
 import string
 
 from django.shortcuts import render
-from django.http import QueryDict
-from django.http import HttpRequest, HttpResponse
-from rest_framework.views import APIView
+from django.http import QueryDict, HttpRequest, HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from asgiref.sync import sync_to_async
+from rest_framework.views import APIView, View
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
@@ -19,7 +21,8 @@ from rest_framework import generics
 from .models import *
 from .serializers import *
 from .utils import *
-from .tasks import *
+from jervis.tasks import *
+
 
 # Create your views here.
 ALPHABET = string.ascii_letters + string.digits
@@ -65,6 +68,7 @@ class SendPrompt(APIView):
         prompt = request.data.get("prompt")
         tg_message_id = request.data.get("tg_message_id")
         chat = Chat.objects.get(chat_id=chat_id)
+        
         if chat.generation_amount == 0:
             return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
 
@@ -76,12 +80,14 @@ class SendPrompt(APIView):
             #response = requests.post(f"http://{DS_SOCKET}/generate_image/", json=data)
             
             if chat.status == "paid":
-                generate_paid_image(prompt, DS_SOCKET)
+                generate_paid_image.delay(prompt, DS_SOCKET)
+                #response = task.get()
             elif chat.status == "free":
-                generate_free_image(prompt, DS_SOCKET)
+                generate_free_image.delay(prompt, DS_SOCKET)
+                #response = task.get()
             
-            return Response(data={"message": "Image generation task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(data={"message": "Image generation task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
+        return JsonResponse(data={"erros":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
  
     
 class PushButton(APIView):
@@ -100,10 +106,9 @@ class PushButton(APIView):
         if chat.generation_amount == 0:
             return Response(data="User has no generation tokens!", status=status.HTTP_402_PAYMENT_REQUIRED)
         
-        
         origin_image = Image.objects.get(tg_message_id = origin_message_id)
         messageid_sseed = origin_image.messageid_sseed
-        origin_prompt = origin_image.prompt
+        origin_prompt = origin_image.prompt.split(":::")[0]
         
         new_data = QueryDict('', mutable=True)
         new_data.update(request.data)
@@ -116,12 +121,14 @@ class PushButton(APIView):
             serializer.save(chat=chat)
             
             if chat.status == "paid":
-                push_paid_button(method, image_number, messageid_sseed, DS_SOCKET)
+                push_paid_button.delay(method, image_number, messageid_sseed, DS_SOCKET)
+                #response = task.get()
             elif chat.status == "free":
-                push_free_button(method, image_number, messageid_sseed, DS_SOCKET)
+                push_free_button.delay(method, image_number, messageid_sseed, DS_SOCKET)
+                #response = task.get()
                 
-            return Response(data={"message": "Image push button task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(data={"message": "Image push button task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 
 class SaveImage(APIView):
@@ -148,26 +155,28 @@ class SaveImage(APIView):
         if chat_serializer.is_valid():
             chat_serializer.save()
         else:
-            return Response(chat_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(chat_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
         # await make_async_request_post(f"http://{TG_HOST}:81/load_image/", data=data_for_tg)
         # response = requests.post(f"http://{TG_SOCKET}/load_image/", json=data_for_tg)
         
         if chat.status == "paid":
-            response = send_data_to_telegram_paid(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
+            response = send_data_to_telegram_paid.delay(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
+            #response = task.get()
         elif chat.status == "free":
-            response = send_data_to_telegram_free(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
+            response = send_data_to_telegram_free.delay(image_url, tg_message_id, chat_id, prompt, TG_SOCKET)
+            #response = task.get()
         
         new_data = QueryDict('', mutable=True)
         new_data.update(request.data)
         new_data["is_ended"] = True
-        new_data["prompt"] = prompt + random_string
+        new_data["prompt"] = prompt + ":::" + random_string
         
         serializer = ImageSerializer(image, new_data)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=response, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(data={"response":response}, status=status.HTTP_200_OK)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
         

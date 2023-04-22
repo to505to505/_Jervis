@@ -99,8 +99,8 @@ DATABASES = {
     }
 }
 
-CELERY_BROKER_URL = f'redis://{os.getenv("REDIS_HOST")}:6379'
-CELERY_RESULT_BACKEND = f'redis://{os.getenv("REDIS_HOST")}:6379'
+# CELERY_BROKER_URL = f'redis://{os.getenv("REDIS_HOST")}:6379'
+# CELERY_RESULT_BACKEND = f'redis://{os.getenv("REDIS_HOST")}:6379'
 CELERY_TIMEZONE = 'Europe/Moscow'
 
 CELERY_FLOWER_USER = 'flower'
