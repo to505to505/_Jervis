@@ -26,10 +26,10 @@ async def send_prompt(chat_id, prompt, tg_message_id):
     return response
 
 
-async def push_button(chat_id, tg_message_id, method, image_number):#, original_message_id):
+async def push_button(chat_id, tg_message_id, original_message_id, method, image_number):
     data = {"chat_id": chat_id,
             "tg_message_id": tg_message_id,
-           # "original_message_id": original_message_id,
+            "original_message_id": original_message_id,
             "method": method,
             "image_number": image_number}   
     response = await make_async_request_post(f"http://{HOST}:8000/api/tg/push_button/", data=data)
