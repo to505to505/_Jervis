@@ -21,24 +21,49 @@ async def make_async_request_post(url: str, headers:dict, data: dict):
             return await response.text()
 
 async def get_image(prompt):
+    # url = 'https://discord.com/api/v9/interactions'
+    # auth = {
+    #         #    'authorization': os.getenv("AUTH_TOKEN")
+    #       'authorization': "MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI"
+    # }
+    # msg = {"type":2,
+    #     "application_id":"936929561302675456",
+    #     "guild_id":"1094995526769987704",
+    #     "channel_id":"1095343240594595900",
+    #     "session_id":"4727a474a9f3f5cc4de5515003a5d3bc",
+    #     "data":{"version":"1077969938624553050",
+    #     "id":"938956540159881230",
+    #     "name":"imagine",
+    #     "type":1,
+    #     "options":[{"type":3,
+    #     "name":"prompt",
+    #     "value":prompt}],
+    # }}
+    #
+    # requests.post(url, headers=auth, json=msg)
+    # #
     url = 'https://discord.com/api/v9/interactions'
     auth = {
-      'authorization': os.getenv("AUTH_TOKEN")
-      #'authorization': "MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI"
+          'authorization': os.getenv("AUTH_TOKEN")
+          #'authorization': "MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI"
     }
     msg = {"type":2,
-    "application_id":"936929561302675456",
-    "guild_id":"1094995526769987704",
-    "channel_id":"1095343240594595900",
-    "session_id":"4727a474a9f3f5cc4de5515003a5d3bc",
-    "data":{"version":"1077969938624553050",
-    "id":"938956540159881230",
-    "name":"imagine",
-    "type":1,
-    "options":[{"type":3,
-    "name":"prompt",
-    "value":f"{prompt}"}],
+        "application_id":"936929561302675456",
+        "guild_id":"1094995526769987704",
+        "channel_id":"1095343240594595900",
+        "session_id":"4727a474a9f3f5cc4de5515003a5d3bc",
+        "data":{"version":"1077969938624553050",
+        "id":"938956540159881230",
+        "name":"imagine",
+        "type":1,
+        "options":[{"type":3,
+        "name":"prompt",
+        "value":prompt}],
     }}
+    #
+    #
+    #
+    #
     # msg = {"type":2,
     # "application_id":"1032699319368814652",
     # "guild_id":"1094995526769987704",
