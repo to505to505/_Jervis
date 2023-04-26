@@ -40,6 +40,7 @@ auth = {
 async def root():
     return {"message": "Hello World"}
 
+
 @app.post("/generate_image/")
 async def generate_image(request: ImageGenerationRequest):
     data = request.json()

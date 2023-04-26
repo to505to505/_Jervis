@@ -37,7 +37,7 @@ async def get_image(prompt):
     "type":1,
     "options":[{"type":3,
     "name":"prompt",
-    "value":f"{prompt}}"}],
+    "value":f"{prompt}"}],
     }}
     # msg = {"type":2,
     # "application_id":"1032699319368814652",
