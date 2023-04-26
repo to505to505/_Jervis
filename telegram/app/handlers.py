@@ -2,6 +2,7 @@ import logging
 import aiohttp
 import asyncio
 import os
+import requests
 
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
@@ -33,7 +34,7 @@ from google.auth.credentials import Credentials
 from googleapiclient.http import MediaFileUpload
 
 from back_functions import *
-from bot import bot, dp
+from bot import bot, dp, BOT_TOKEN
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -97,15 +98,19 @@ async def handle_photo(message: types.Message, state: FSMContext):
     
     if message.caption:
         caption = message.caption
-        file_id = message.photo[-1].file_id
-        
+        file_info = await bot.get_file(message.photo[len(message.photo) - 1].file_id)
+        downloaded_file = await bot.download_file(file_info.file_path)
+        PHOTO_PATH = f"./reference/{chat_id}__{tg_message_id}_reference.jpeg"
+        src = 'reference/' + message.photo[1].file_id
+        with open(PHOTO_PATH, 'wb') as new_file:
+            new_file.write(downloaded_file.getvalue())
+        logging.info(f'{downloaded_file.getvalue()}')
+        logging.info(f'OK')
         # save image locally
-        PHOTO_PATH = f"/reference/{chat_id}__{tg_message_id}_reference.jpg"
+        
         PHOTO_NAME = f'{chat_id}__{tg_message_id}_r'
          
-        file = await bot.download_file_by_id(file_id)
-        with open(PHOTO_PATH, "wb") as f:
-            f.write(file.read())
+    
             
         await bot.send_message(chat_id, f'Изображение генерируется по картинке-референсу и по запросу: \n{caption}\n Пожалуйста, подождите!')
         
@@ -120,12 +125,12 @@ async def handle_photo(message: types.Message, state: FSMContext):
         prompt = ""
         prompt += photo_link
         prompt += f" {caption}"
-
+        logging.info(f'{photo_link}')
         await send_prompt(chat_id, prompt, tg_message_id)
-        #await state.set_state(MyConversation.non_generation)
+        await state.set_state(MyConversation.non_generation)
     else:
         await bot.send_message(chat_id, 'Вы обязательно должны прикрепить prompt в сообщении с картинкой-референсом! Попробуйте еще раз.')
-        #await state.set_state(MyConversation.non_generation)
+        await state.set_state(MyConversation.non_generation)
 
 
 async def handle_help(message: types.Message, state: FSMContext):

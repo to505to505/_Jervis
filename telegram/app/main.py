@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.DEBUG)
 dp.register_message_handler(send_start, commands=['start'], state = '*')
 dp.register_message_handler(handle_generate, Text(equals='Сгенерировать изображение'), state = MyConversation.non_generation)
 dp.register_callback_query_handler(button_gen_handler, lambda callback_query: True,  state = '*')
-dp.register_message_handler(handle_help, Text(equals='Техническая поддержка'),  state = '*')
+dp.register_message_handler(handle_help, Text(equals='Техническая поддержка'),  state = '*' )
 dp.register_message_handler(handle_prompt, content_types=types.ContentTypes.TEXT, state = MyConversation.generation)
 dp.register_message_handler(handle_photo, content_types=types.ContentTypes.PHOTO, state = MyConversation.generation)
 
