@@ -7,6 +7,7 @@ from fastapi import FastAPI
 import disnake
 from disnake.ext import commands
 from uvicorn import Config, Server
+from JervisRequests import *
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -27,7 +28,7 @@ async def generate_image(input_text):
     logging.info(f"sent a /generate_image command with prompt: {input_text}")
 
     get_image(input_text)
-    
+
     logging.info(f"sent a /generate command with prompt: {input_text}")
 
     return {"result": "Your request is gotten"}

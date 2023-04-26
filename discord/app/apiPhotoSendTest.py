@@ -16,7 +16,7 @@ from JervisRequests import *
 
 class ImageGenerationRequest(BaseModel):
     prompt: str
-    
+
 class PushButtonRequest(BaseModel):
     method: str
     image_number: int
@@ -46,7 +46,7 @@ async def generate_image(request: ImageGenerationRequest):
     data = json.loads(data)
     input_text = data.get("prompt")
     #logging.info(data, input_text)
-    
+
     file = open(IMG_PATH, 'rb')
     files = {
         "file" : (#IMG_PATH,
@@ -58,5 +58,5 @@ async def generate_image(request: ImageGenerationRequest):
     requests.post(url, headers=auth, data=msg, files=files)
     print(f"sent a /generate command with prompt: {input_text}")
     file.close()
-    
+
     return {"result": "image is generating"}
