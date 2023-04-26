@@ -13,12 +13,6 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=lo
 
 app = FastAPI()
 
-url = 'https://discord.com/api/v9/interactions'
-auth = {
-  'authorization': os.getenv("AUTH_TOKEN")
-}
-
-
 @app.get("/")
 async def root():
     return {"message": "Hello World"}

@@ -11,7 +11,7 @@ async def make_async_request_put(url: str, headers:dict, data: dict):
     async with aiohttp.ClientSession() as session:
         async with session.put(url, headers=headers, json=data) as response:
             return await response.text()
-        
+
 async def make_async_request_post(url: str, headers:dict, data: dict):
     '''
     Make async http request
@@ -26,7 +26,6 @@ async def get_image(prompt):
       'authorization': os.getenv("AUTH_TOKEN")
       #'authorization': "MTA5NjExMjQxMzE0Njg5NDQzNw.G40cOT.w3XybsZRmg3sXG2DpEDxThpxDr44nmmiE0tuWI"
     }
-    #prompt = input()
     msg = {"type":2,
     "application_id":"936929561302675456",
     "guild_id":"1094995526769987704",
@@ -54,7 +53,7 @@ async def get_image(prompt):
     # "name":"description",
     # "value":prompt}],
     # }}
-    
+
     await make_async_request_post(url, headers = auth, data = msg)
     #requests.post(url, headers=auth, json=msg)
 
