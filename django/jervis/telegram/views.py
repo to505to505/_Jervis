@@ -33,14 +33,6 @@ TG_SOCKET = f"{os.getenv('TG_HOST')}:81"
 
 #DS_HOST = "localhost"
 DS_SOCKET = f"{os.getenv('DISCORD_HOST')}:80"
-
-
-class HelloWorldView(APIView):
-    '''
-    Just test function. If you get a response, then the API is working
-    '''
-    def get(self, request):
-        return Response({"message": "Hello, world!"})
     
     
 class CreateTgChat(APIView):
@@ -52,7 +44,7 @@ class CreateTgChat(APIView):
         try:
             chat = Chat.objects.get(chat_id=chat_id)
             return Response("User is already created", status=status.HTTP_409_CONFLICT)
-        except Chat.DoesNotExist: 
+        except Chat.DoesNotExist:
             serializer = ChatSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save() 
@@ -82,8 +74,8 @@ class SendPrompt(APIView):
             elif chat.status == "free":
                 generate_free_image.delay(prompt, DS_SOCKET)
             
-            return JsonResponse(data={"message": "Image generation task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
-        return JsonResponse(data={"erros":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "Image generation task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
+        return Response(data={"erros":serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
  
     
 class PushButton(APIView):

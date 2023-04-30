@@ -11,14 +11,11 @@ class Chat(models.Model):
     status = models.CharField(max_length=12, choices=STATUS_CHOICES, default="free")
 
     def __str__(self) -> str:
-        return f"tg_id: {self.chat_id}"
-    
-class Client(models.Model):
-    chat = models.ForeignKey(Chat, null=True, on_delete=models.SET_NULL)
+        return f"tg_id: {self.chat_id} generations: {self.generation_amount}"
     
     
 class Image(models.Model):
-    client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL)
+    #client = models.ForeignKey(Client, null=True, on_delete=models.SET_NULL)
     chat = models.ForeignKey(Chat, null=True, on_delete=models.SET_NULL)
     image_url = models.URLField(null=True)
     tg_message_id = models.IntegerField(null=True)
@@ -29,4 +26,4 @@ class Image(models.Model):
     is_ended = models.BooleanField(default=False)
     
     def __str__(self) -> str:
-        return f"{self.pk} > {self.prompt[:20]}"
+        return f"{self.pk} > {self.prompt[:30]}"

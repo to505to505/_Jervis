@@ -71,7 +71,7 @@ async def download_photo(chat_id, tg_message_id, image_url):
             done = False
             while done is False:
                 status, done = downloader.next_chunk()
-                print(f'Download {int(status.progress() * 100)}.')
+                #print(f'Download {int(status.progress() * 100)}.')
     except HttpError as error:
         if error.resp.status == 404:
             print(f'File with ID "{file_id}" does not exist.')

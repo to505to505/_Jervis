@@ -96,8 +96,9 @@ async def on_message(message):
             file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
-
-            await send_image(messageid_sseed, file_drive_url, message.content, DS_HOST=HOST)
+            prompt = message.content.split("**")[1]
+            
+            await send_image(messageid_sseed, file_drive_url, prompt, DS_HOST=HOST)
 
             #logging.info(file_drive_url)
             #logging.info(FILE_PATH)
