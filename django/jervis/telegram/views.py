@@ -100,7 +100,7 @@ class PushButton(APIView):
         
         new_data = QueryDict('', mutable=True)
         new_data.update(request.data)
-        new_data["prompt"] = f"{origin_prompt} {method}"
+        new_data["prompt"] = f"{origin_prompt}"# {method}"
         
         serializer = ImageSerializer(data=new_data)
         if serializer.is_valid():
@@ -111,8 +111,8 @@ class PushButton(APIView):
             elif chat.status == "free":
                 push_free_button.delay(method, image_number, messageid_sseed, DS_SOCKET)
                 
-            return JsonResponse(data={"message": "Image push button task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={"message": "Image push button task has been added to the queue."}, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 
 class SaveImage(APIView):

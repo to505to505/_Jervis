@@ -31,6 +31,8 @@ app = FastAPI()
 
 #logging.info(IMG_PATH)
 
+logging.basicConfig(level=logging.DEBUG)
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
@@ -40,21 +42,23 @@ async def generate_image(request: ImageGenerationRequest):
     data = request.json()
     data = json.loads(data)
     input_text = data.get("prompt")
-    #logging.info(data, input_text)
+    
+    logging.info(data, input_text)
     await get_image(input_text)
     logging.info(f"sent a /imagine command with prompt: {input_text}")
-    print(f"sent a /generate command with prompt: {input_text}")
     return {"result": "image is generating"}
 
 @app.post("/push_button/")
 async def push_button(request: PushButtonRequest):
+    logging.info("I AM ALIVE!")
     data = request.json()
     data = json.loads(data)
+    
     method = data.get("method")
     image_number = data.get("image_number")
     messageid_sseed = data.get("messageid_sseed")
 
+    logging.info(f"try to ( pushed a button {image_number} with messageid_sseed {messageid_sseed} for {method}")
     await push_button_request(method, image_number, messageid_sseed)
     logging.info(f"pushed a button {image_number} with messageid_sseed {messageid_sseed} for {method}")
-    print(f"pushed a button {image_number} with messageid_sseed {messageid_sseed} for {method}")
     return {"result": f"image is {method}"}
