@@ -53,6 +53,7 @@ class MyConversation(StatesGroup):
     non_generation = State()
 
 
+
 ### Handler of /start
 async def send_start(message: types.Message, state: FSMContext):
     ''' Starting bot, sending user main menu buttons and sending his chat_id to django'''
@@ -88,14 +89,16 @@ async def handle_prompt(message: types.Message, state: FSMContext):
         await bot.send_message(chat_id, f'Изображение генерируется по запросу: \n{prompt}\n Пожалуйста, подождите!')
         await send_prompt(chat_id, prompt, tg_message_id)
         await MyConversation.non_generation.set()
-
         
+
+
     
 async def handle_photo(message: types.Message, state: FSMContext):
     '''' Handling prompt with photo'''
     chat_id = message.chat.id
     tg_message_id = message.message_id
     
+
     if message.caption:
         caption = message.caption
         file_info = await bot.get_file(message.photo[len(message.photo) - 1].file_id)
@@ -147,11 +150,17 @@ async def handle_help(message: types.Message, state: FSMContext):
 async def button_gen_handler(callback_query: CallbackQuery, state: FSMContext):
     logging.info(f'Buttons started')
     message = callback_query.message
+
     callback_text = callback_query.data
     method, image_number = callback_text.split(':')
     tg_message_id = message.message_id
     chat_id = callback_query.message.chat.id
     original_message_id = message.reply_to_message.message_id
+    from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+
+    #блок кнопок
+
+
 
     response = await push_button(chat_id, tg_message_id, original_message_id, method, image_number)
     return response

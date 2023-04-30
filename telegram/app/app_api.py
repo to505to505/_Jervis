@@ -42,6 +42,7 @@ from bot import bot, dp
 from utils import *
 
 
+
 #getting acess to google api
 SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
