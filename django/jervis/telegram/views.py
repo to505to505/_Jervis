@@ -100,7 +100,7 @@ class PushButton(APIView):
         
         new_data = QueryDict('', mutable=True)
         new_data.update(request.data)
-        new_data["prompt"] = f"{origin_prompt} {method}"
+        new_data["prompt"] = f"{origin_prompt}"# {method}"
         
         serializer = ImageSerializer(data=new_data)
         if serializer.is_valid():
