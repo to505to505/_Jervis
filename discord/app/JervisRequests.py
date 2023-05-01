@@ -57,6 +57,9 @@ async def push_button_request(method, image_number, messageid_sseed):
     message_id, sseed = messageid_sseed.split("_")
     sseed = sseed.replace(".png", "")
     url = 'https://discord.com/api/v9/interactions'
+    solo = ""
+    if method == "reroll":
+        solo = "::SOLO"
     #url = 'https://discord.com/api/v9/channels/1095343240594595900/messages'
     # msg = {"type":3,
     # "guild_id":"1094995526769987704",
@@ -75,7 +78,7 @@ async def push_button_request(method, image_number, messageid_sseed):
         "application_id":"936929561302675456",
         "session_id":"966ba3599b3b18ee4fcf36dd62229bd6",
         "data":{"component_type":2,
-        "custom_id":f"MJ::JOB::{method}::{image_number}::{sseed}"}
+        "custom_id":f"MJ::JOB::{method}::{image_number}::{sseed}{solo}"}
     }
     #msg = {"content":f"{message_id}  MJ::JOB::{method}::{image_number}::{sseed}","tts":'false',"flags":0}
     logging.info("Sending pushbutton_ask to discord!")
