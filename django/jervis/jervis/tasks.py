@@ -3,7 +3,6 @@ from crontab import CronTab
 import os
 from celery import shared_task
 import requests
-import logging
 from .celery import app
 
 # Templates of tasks for reucing code base
@@ -17,7 +16,6 @@ def push_button(method, image_number, messageid_sseed, ds_socket):
     data = {"method":method,
             "image_number":image_number,
             "messageid_sseed":messageid_sseed}
-    logging.info("Sent! Sure!")
     response = requests.post(f"http://{ds_socket}/push_button/", json=data)
     return response
 
