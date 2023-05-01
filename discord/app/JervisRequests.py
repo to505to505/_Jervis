@@ -76,7 +76,7 @@ async def push_button_request(method, image_number, messageid_sseed):
     #     "data":{"component_type":2,
     #     "custom_id":f"MJ::JOB::{method}::{image_number}::{sseed}"}
     # }
-    msg = {"content":f"{message_id}  MJ::JOB::{method}::{image_number}::{sseed}","tts":false,"flags":0}
+    msg = {"content":f"{message_id}  MJ::JOB::{method}::{image_number}::{sseed}","tts":'false',"flags":0}
     logging.info("Sending pushbutton_ask to discord!")
     await make_async_request_post(url, headers = auth, data = msg)
     #requests.post(url, headers=auth, json=msg)
