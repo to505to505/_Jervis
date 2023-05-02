@@ -97,6 +97,8 @@ async def on_message(message):
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
             prompt = message.content.split("**")[1]
+            if prompt.find("<https://s.mj.run/") != -1:
+                prompt = prompt.split("> ")[1]
             
             await send_image(messageid_sseed, file_drive_url, prompt, DS_HOST=HOST)
 
