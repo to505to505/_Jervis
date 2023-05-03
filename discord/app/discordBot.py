@@ -5,6 +5,7 @@ import logging
 import asyncio
 import aiohttp
 from pathlib import Path
+import re
 
 import disnake
 from disnake.ext import commands
@@ -98,7 +99,13 @@ async def on_message(message):
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
             prompt = message.content.split("**")[1]
             if prompt.find("<https://s.mj.run/") != -1:
-                prompt = prompt.split("> ")[1]
+                pattern = r"<https://s\.mj\.run/.*?> "
+                link = (re.findall(pattern, prompt))[0][:-1]
+                link = link.strip("<>")
+                response = requests.get(link, allow_redirects=True)
+                prompt = f'{response.url} ' + re.sub(pattern, "", prompt)
+
+                
             
             await send_image(messageid_sseed, file_drive_url, prompt, DS_HOST=HOST)
 
