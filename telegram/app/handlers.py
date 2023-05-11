@@ -26,6 +26,7 @@ from aiogram.types import InputFile
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
+from aiogram.utils import markdown
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -90,7 +91,7 @@ async def send_start(message: types.Message, state: FSMContext):
     keyboard.row(button1, button2)
     keyboard.add(button3)
     chat_id = message.chat.id
-    await bot.send_message(chat_id, 'hello world)', reply_markup = keyboard)
+    await bot.send_message(chat_id, 'hello world', reply_markup = keyboard)
     await send_id(chat_id)
 
 
@@ -163,9 +164,10 @@ async def handle_help(message: types.Message, state: FSMContext):
     #await state.set_state(MyConversation.non_generation)
     chat_id = message.chat.id
     button1 = InlineKeyboardButton('Техническая поддержка', url = 'https://t.me/Kwazzart')
-    button2 = InlineKeyboardButton('Сотрудничество и прочие вопросы', url = 'https://t.me/to505to505')
+    button2 = InlineKeyboardButton('Сотрудничество и прочие вопросы', url = 'https://t.me/jervis_collaboration')
     keyboard = InlineKeyboardMarkup().row(button1, button2)
-    await bot.send_message(chat_id, f'При обращении в поддержку, пожалуйста, сообщите свой id: {chat_id}', reply_markup=keyboard)
+    chat_id_str = markdown.bold(f'{chat_id}')
+    await bot.send_message(chat_id, f'При обращении в поддержку, пожалуйста, сообщите свой ID: {chat_id_str}', reply_markup=keyboard)
 
 
 #Handlers of buttons like U1, U2 etc, 

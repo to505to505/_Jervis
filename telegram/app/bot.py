@@ -4,6 +4,7 @@ import logging
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.types import ParseMode
 
 import aioredis
 import redis 
@@ -20,5 +21,5 @@ BOT_TOKEN = '6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ'
 #storage = RedisStorage2(host=os.getenv("REDIS_HOST"), port=6379, db=0)
 storage = MemoryStorage()
 
-bot = Bot(token=BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)#, parse_mode=ParseMode.MARKDOWN_V2)
 dp = Dispatcher(bot, storage=storage)

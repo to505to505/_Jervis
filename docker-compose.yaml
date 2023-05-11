@@ -65,6 +65,8 @@ services:
 
   discord:
     image: jervis_discord:1
+    volumes:
+      - shared_data:/data/shared_folder1
     container_name: jervis_discord
     environment:
       DJANGO_HOST: jervisdjango
@@ -79,6 +81,8 @@ services:
 
   tg:
     image: jervis_tg:1
+    volumes:
+      - shared_data:/data/shared_folder1
     container_name: jervis_tg
     environment:
       DJANGO_HOST: jervisdjango
@@ -101,6 +105,10 @@ volumes:
    name: jervis_redis_vol
  jervis_backend_vol:
    name: jervis_backend_vol
+ shared_data:
+   name: shared_data
+   external: false
+  
 
 networks:
  jervis_net:

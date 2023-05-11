@@ -6,6 +6,7 @@ import asyncio
 import aiohttp
 from pathlib import Path
 import re
+import boto3
 
 import disnake
 from disnake.ext import commands
@@ -19,6 +20,23 @@ from JervisRequests import get_image, send_image
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
+aws_access_key_id = 'AKIAQME5MYJPO377UW6W'
+aws_secret_access_key = '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'
+region_name = 'eu-north-1'
+output = 'json'
+bucket_name = 'jervis'
+
+# Create an S3 client (configuration)
+s3 = boto3.client('s3',
+                  aws_access_key_id=aws_access_key_id,
+                  aws_secret_access_key=aws_secret_access_key,
+                  region_name=region_name
+                  )
+
+def upload_s3(upload_path):
+    object_key = upload_path.split("/")[-1]
+    with open(upload_path, "rb") as f:
+        s3.upload_fileobj(f, bucket_name, object_key)
 
 #BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
 BOT_TOKEN = os.getenv("APP_TOKEN")
@@ -27,7 +45,7 @@ BOT_TOKEN = os.getenv("APP_TOKEN")
 HOST = os.getenv("DJANGO_HOST")
 
 #pathes
-PICTURE_PATH = ''
+PICTURE_PATH = '/data/shared_folder1/'
 MAIN_FOLDER_PATH = Path(__file__).resolve(strict=True).parent
 
 #config for service account of google drive_service
@@ -78,23 +96,24 @@ async def on_message(message):
             file_ds_url = attachment.url
             await message.channel.send(f"Image: {file_ds_url}")
             logging.info('saved')
-
+            upload_s3(FILE_PATH)
+            file_drive_url = f'https://jervis.s3.eu-north-1.amazonaws.com/results/{filename}'
             # Connecting to google drive and load image
-            file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
-            media = MediaFileUpload(FILE_PATH, resumable=True)
+            # file_metadata = {'name': filename, 'parents': ['1Av1_QNovnSEvQAnED5OAvZO2TJMFowlP']}
+            # media = MediaFileUpload(FILE_PATH, resumable=True)
 
-            # file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+            ### file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-            file = await asyncio.to_thread(
-            drive_service.files().create,
-            body=file_metadata,
-            media_body=media,
-            fields='id'
-            )
+            # file = await asyncio.to_thread(
+            # drive_service.files().create,
+            # body=file_metadata,
+            # media_body=media,
+            # fields='id'
+            # )
 
-            # Getting link on google drive
-            file_id = file.execute().get('id')
-            file_drive_url = f'https://drive.google.com/file/d/{file_id}'
+            # # Getting link on google drive
+            # file_id = file.execute().get('id')
+            # file_drive_url = f'https://drive.google.com/file/d/{file_id}'
 
             messageid_sseed = f"{message.id}_{parce_get_sseed(file_ds_url)}"
             prompt = message.content.split("**")[1]
@@ -105,8 +124,15 @@ async def on_message(message):
                 response = requests.get(link, allow_redirects=True)
                 prompt = f'{response.url} ' + re.sub(pattern, "", prompt)
 
-                
+            file_path = "/data/shared_folder1/eee.txt"
+
+            with open(file_path, 'w') as file:
+                file.write("This is an example content.")
             
+            #delete
+            
+            
+            logging.info(f"sent soon")
             await send_image(messageid_sseed, file_drive_url, prompt, DS_HOST=HOST)
 
             #logging.info(file_drive_url)

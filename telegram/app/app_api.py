@@ -38,11 +38,14 @@ from googleapiclient import http
 from google.oauth2 import service_account
 from google.auth.credentials import Credentials
 
+from PIL import Image
+
+
 
 from bot import bot, dp 
 from utils import *
 
-
+PICTURE_PATH = '/data/shared_folder1/'
 
 #getting acess to google api
 SERVICE_ACCOUNT_FILE = f'jervisreshost-65947324df56.json'
@@ -119,17 +122,34 @@ async def handle_post(request: ImageRequest):
     tg_message_id = data['tg_message_id']
     image_url = data['image_url']
     prompt = data['prompt']
+
+    PHOTO_NAME = image_url.split("/")[-1]
+    FILE_PATH = PICTURE_PATH + PHOTO_NAME
+
+
+    img = Image.open(FILE_PATH)
+    img_data = io.BytesIO()
+    img.save(img_data, format='PNG')
+    img_data.seek(0)  # Важно сбросить указатель в начало файла
+
+    # Создаем объект InputFile
+    input_file1 = InputFile(img_data, filename='image.png')
+
+
+    file_size = os.path.getsize(FILE_PATH)
+    logging.info(f"file_size: {file_size}")
+    if os.path.exists(FILE_PATH):
+        os.remove(FILE_PATH)
+    else:
+        print(f"NOT DOUNF TO DELETE")
+    #await download_photo(chat_id, tg_message_id, image_url)
+    #reply_text = "This is your photo!"
+    #photo_path = f'temp_storage/{chat_id}__{tg_message_id}__.jpg' 
     
-    await download_photo(chat_id, tg_message_id, image_url)
-    reply_text = "This is your photo!"
-    photo_path = f'temp_storage/{chat_id}__{tg_message_id}__.jpg' 
-     
-    with open(photo_path, 'rb') as f:
-        photo_bytes = f.read()
         
     keyboard = await make_buttons()
-    await bot.send_photo(chat_id = chat_id, photo = photo_bytes, caption=reply_text, reply_to_message_id= tg_message_id, reply_markup = keyboard)
-    os.remove(photo_path)
+    await bot.send_document(chat_id = chat_id, document = input_file1, caption = 'Here is ur photo!', reply_to_message_id = tg_message_id, reply_markup=keyboard)
+    #os.remove(photo_path)
     
     return {"message": "Data received and processed successfully"}
 
