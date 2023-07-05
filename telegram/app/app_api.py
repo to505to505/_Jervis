@@ -126,7 +126,7 @@ async def handle_post(request: ImageRequest):
     PHOTO_NAME = image_url.split("/")[-1]
     FILE_PATH = PICTURE_PATH + PHOTO_NAME
 
-
+    
     img = Image.open(FILE_PATH)
     img_data = io.BytesIO()
     img.save(img_data, format='PNG')
