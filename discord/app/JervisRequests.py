@@ -71,6 +71,18 @@ async def relax_mode():
     await make_async_request_post(url, headers = auth, data = msg)    
     #requests.post(url, headers=auth, json=msg)
 
+async def Im_honestly_midjourney():
+    url = 'https://discord.com/api/v9/channels/1095343240594595900/messages'
+    msg = {"content":"AI robot drawing a paintings - @jervis (fast)",
+    "channel_id":"1095343240594595900",
+    "type":0,
+    "sticker_ids":[],
+    "attachments":[{"id":"0",
+    "filename":"jervis_Happy_cat_meow_a57531ca-fddd-4084-a6e9-80c146871c6c.png",
+    "uploaded_filename":"c7515530-0982-45f9-8b19-52bc07d1b769/jervis_Happy_cat_meow_a57531ca-fddd-4084-a6e9-80c146871c6c.png"}]}
+    await make_async_request_post(url, headers = auth, data = msg)
+    #requests.post(url, headers=auth, json=msg)
+
 async def get_image(prompt):
     url = 'https://discord.com/api/v9/interactions'
     msg = {"type":2,
