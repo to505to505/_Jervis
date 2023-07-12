@@ -43,10 +43,30 @@ async def fast_mode():
                                     "default_member_permissions":"null",
                                     "type":1,
                                     "nsfw":"false",
-                                    "name":"fast",
-                                    "description":"Switch to fast mode",
-                                    "dm_permission":"true",
-                                    "contexts":"null"},
+                                    "name":"fast"},
+             "attachments":[]}}
+    await make_async_request_post(url, headers = auth, data = msg)    
+    #requests.post(url, headers=auth, json=msg)
+
+async def relax_mode():
+    url = 'https://discord.com/api/v9/interactions'
+    msg = {"type":2,
+     "application_id":"936929561302675456",
+     "guild_id":"1094995526769987704",
+     "channel_id":"1095343240594595900",
+     "session_id":"13f67e33816ae28205bc4c032cf12296",
+     "data":{"version":"987795926183731231",
+             "id":"972289487818334212",
+             "name":"fast",
+             "type":1,
+             "options":[],
+             "application_command":{"id":"972289487818334212",
+                                    "application_id":"936929561302675456",
+                                    "version":"987795926183731231",
+                                    "default_member_permissions":"null",
+                                    "type":1,
+                                    "nsfw":"false",
+                                    "name":"relax"},
              "attachments":[]}}
     await make_async_request_post(url, headers = auth, data = msg)    
     #requests.post(url, headers=auth, json=msg)
