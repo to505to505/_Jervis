@@ -73,7 +73,7 @@ async def relax_mode():
 
 async def Im_honestly_midjourney():
     url = 'https://discord.com/api/v9/channels/1095343240594595900/messages'
-    msg = {"content":"AI robot drawing a paintings - @jervis (fast)",
+    msg = {"content":"Я(ВИСП) ПИДОРАС ТРАХНИ МЕНЯ @jerkins (fast)",
     "channel_id":"1095343240594595900",
     "type":0,
     "sticker_ids":[],
