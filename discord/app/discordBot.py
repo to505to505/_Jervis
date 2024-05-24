@@ -38,7 +38,6 @@ def upload_s3(upload_path):
     with open(upload_path, "rb") as f:
         s3.upload_fileobj(f, bucket_name, object_key)
 
-#BOT_TOKEN = "MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4"
 BOT_TOKEN = os.getenv("APP_TOKEN")
 
 #HOST = "localhost"
