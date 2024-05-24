@@ -20,8 +20,8 @@ from JervisRequests import get_image, send_image
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-aws_access_key_id = 'AKIAQME5MYJPO377UW6W'
-aws_secret_access_key = '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'
+aws_access_key_id = 
+aws_secret_access_key = 
 region_name = 'eu-north-1'
 output = 'json'
 bucket_name = 'jervis'
