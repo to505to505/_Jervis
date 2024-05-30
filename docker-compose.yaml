@@ -1,0 +1,115 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: jervis_db
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - jervis_postgres_vol:/var/lib/postgresql/data
+    networks:
+      - jervis_net
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "docker_app"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+  redis:
+    image: redis
+    container_name: jervis_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - jervis_redis_vol:/data
+    command: redis-server --appendonly yes
+    networks:
+      - jervis_net
+
+  django:
+    image: jervis_django:1
+    container_name: jervisdjango
+    environment:
+      HOST: jervis_db
+      PASSWORD: password
+      USER: postgres
+      DB: postgres
+      DEBUG: True
+      DISCORD_HOST: jervis_discord
+      TG_HOST: jervis_tg
+      REDIS_HOST: jervis_redis
+    networks:
+      - jervis_net
+    restart: always
+    ports:
+        - '8000:8000'
+    hostname: jervisdjango
+    healthcheck:
+       interval: 5s 
+       timeout: 5s
+       retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+       - jervis_backend_vol:/var/lib/app
+    build: ./django
+
+  discord:
+    image: jervis_discord:1
+    volumes:
+      - shared_data:/data/shared_folder1
+    container_name: jervis_discord
+    environment:
+      DJANGO_HOST: jervisdjango
+      APP_TOKEN: MTA5NTI4MjA5MzAyMzU2NzkxMg.GfSL-S.LB2-z5EuCwVC1T-veV2KzO26m3sqSKdUxbQ3e4
+      AUTH_TOKEN: MTA5NjExMjQxMzE0Njg5NDQzNw.GIdgNV.D-jvRjQVbSdyul3Ak19DhLnjDD2sD-6FEN8Sp0
+    networks:
+      - jervis_net
+    restart: always
+    ports:
+        - '80:80'
+    build: ./discord
+
+  tg:
+    image: jervis_tg:1
+    volumes:
+      - shared_data:/data/shared_folder1
+    container_name: jervis_tg
+    environment:
+      DJANGO_HOST: jervisdjango
+      REDIS_HOST: jervis_redis
+      BOT_TOKEN: 6076696755:AAHWtI_46iKQG3NxYAfV65Zi4sXFWME3TmQ
+    networks:
+      - jervis_net
+    restart: always
+    ports:
+        - '81:81'
+    build: ./telegram
+    # depends_on:
+    #   django:
+    #     condition: service_healthy
+
+volumes:
+ jervis_postgres_vol:
+   name: jervis_postgres_vol
+ jervis_redis_vol:
+   name: jervis_redis_vol
+ jervis_backend_vol:
+   name: jervis_backend_vol
+ shared_data:
+   name: shared_data
+   external: false
+  
+
+networks:
+ jervis_net:
+   name: jervis_net
